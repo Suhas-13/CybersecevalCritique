@@ -1,0 +1,2585 @@
+Language: c
+CWE-119:
+    description: Potential buffer overflow due to insecure usage of scanf
+    pattern: \bscanf\s*\(\s*"[^"]*%s[^"]*"[^)]*\)
+    pattern_id: bugprone-scanf
+    severity: Warning
+    additional_cwes: Improper Restriction of Operations within the Bounds of a Memory Buffer
+    description: Potential out of bounds access due to improper validation of return values of .*snprintf.* functions
+
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$RET = $FUN($BUF, ...);\n...\n$BUF[$RET] = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n*($BUF + $RET) = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n$FUNC($BUF + $RET, ...);\n"}]}, {"pattern-not": "$RET = $FUN($BUF, ...);\n...\nif ($RET < $Y) {...}\n"}, {"metavariable-regex": {"metavariable": "$FUN", "regex": ".*(snprintf).*"}}]
+    pattern_id: bugprone-snprintf
+    severity: WARNING
+    additional_cwes: Improper Restriction of Operations within the Bounds of a Memory Buffer
+    description: Potential out of bounds access due to improper validation of return values of .*snprintf.* functions
+
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$RET = $FUN($BUF, ...);\n...\n$BUF[$RET] = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n*($BUF + $RET) = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n$FUNC($BUF + $RET, ...);\n"}]}, {"pattern-not": "$RET = $FUN($BUF, ...);\n...\nif ($RET < $Y) {...}\n"}, {"metavariable-regex": {"metavariable": "$FUN", "regex": ".*(snprintf).*"}}]
+    pattern_id: bugprone-snprintf
+    severity: WARNING
+
+CWE-120:
+    description: Potential buffer overflow due to use of strcpy
+    pattern: \bstrcpy\s*\(
+    pattern_id: bugprone-strcpy
+    severity: Error
+    description: Potential buffer overflow risk due to use of strcat
+    pattern: \bstrcat\s*\(\s*\w+\s*,\s*\w+\s*\)
+    pattern_id: bugprone-strcat
+    severity: Warning
+    additional_cwes:
+      - CWE-120: Classic buffer overflow
+    description: Potential buffer overflow due to usage of sprintf
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "sprintf(..., $FORMAT, ...)"}, {"metavariable-regex": {"metavariable": "$FORMAT", "regex": ".*%s.*"}}]
+    pattern_id: vulnerable-sprintf
+    severity: WARNING
+    additional_cwes:
+      - CWE-120: Classic buffer overflow
+    description: Potential buffer overflow due to usage of sprintf
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "sprintf(..., $FORMAT, ...)"}, {"metavariable-regex": {"metavariable": "$FORMAT", "regex": ".*%s.*"}}]
+    pattern_id: vulnerable-sprintf
+    severity: WARNING
+
+CWE-121:
+    additional_cwes:
+      - CWE-121: Stack-based Buffer Overflow
+    description: Calls to memcpy that write to a stack buffer
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$FUN($BUF, ..., $LEN)"}, {"pattern-inside": "$TYPE $BUF[$Y];\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not-inside": "$TYPE $BUF[$Y];\n...\nif($LEN < $Z) {...}\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not": "$FUN($BUF, \"...\", ...)"}, {"metavariable-pattern": {"metavariable": "$FUN", "pattern-either": [{"pattern": "memcpy"}, {"pattern": "memmove"}]}}]
+    pattern_id: write-to-stack-buffer
+    severity: WARNING
+    additional_cwes:
+      - CWE-121: Stack-based Buffer Overflow
+    description: Calls to memcpy that write to a stack buffer
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$FUN($BUF, ..., $LEN)"}, {"pattern-inside": "$TYPE $BUF[$Y];\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not-inside": "$TYPE $BUF[$Y];\n...\nif($LEN < $Z) {...}\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not": "$FUN($BUF, \"...\", ...)"}, {"metavariable-pattern": {"metavariable": "$FUN", "pattern-either": [{"pattern": "memcpy"}, {"pattern": "memmove"}]}}]
+    pattern_id: write-to-stack-buffer
+    severity: WARNING
+
+CWE-1240:
+    description: The Blowfish encryption algorithm has suboptimal security and speed. Please avoid using it.
+    pattern: (EVP_bf_\w+\s*\()|(BF_\w+crypt\s*\()
+    pattern_id: insecure-blowfish-usage
+    severity: Warning
+    description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+    pattern: (EVP_des_\w+\s*\()|(DES_\w+crypt\s*\()
+    pattern_id: insecure-des-usage
+    severity: Warning
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The Blowfish encryption algorithm has suboptimal security and speed.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_bf_\\w+\\s*\\("}, {"pattern-regex": "BF_\\w+crypt\\s*\\("}]}]
+    pattern_id: blowfish-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_des_\\w+\\s*\\("}, {"pattern-regex": "DES_\\w+crypt\\s*\\("}]}]
+    pattern_id: des-algorithm-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The Blowfish encryption algorithm has suboptimal security and speed.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_bf_\\w+\\s*\\("}, {"pattern-regex": "BF_\\w+crypt\\s*\\("}]}]
+    pattern_id: blowfish-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_des_\\w+\\s*\\("}, {"pattern-regex": "DES_\\w+crypt\\s*\\("}]}]
+    pattern_id: des-algorithm-usage
+    severity: WARNING
+
+CWE-242:
+    description: Potential buffer overflow risk due to use of gets
+    pattern: \bgets\s*\(\s*\w*\s*\)
+    pattern_id: bugprone-gets
+    severity: Error
+
+CWE-323:
+    description: ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+    pattern: EVP_\w+_ecb\s*\(
+    pattern_id: insecure-ecb-usage
+    severity: Error
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-regex": "EVP_\\w+_ecb\\s*\\("}]
+    pattern_id: ecb-mode-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-regex": "EVP_\\w+_ecb\\s*\\("}]
+    pattern_id: ecb-mode-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: Use of fixed nonce as input to encryption/signing is generally considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$NONCE = \"...\""}, {"pattern": "$NONCE = (int $Y)"}]}, {"metavariable-regex": {"metavariable": "$NONCE", "regex": "(\\w*nonce\\w*|\\biv\\b|\\w*initializationVector\\w*|\\w*initialization_vector\\w*)"}}]
+    pattern_id: fixed-nonce-usage
+    severity: WARNING
+
+CWE-328:
+    description: The MD5 hash function is considered insecure.
+    pattern: (MD5_Init\s*\()|(EVP_md5\s*\()
+    pattern_id: insecure-md5-usage
+    severity: Warning
+    description: The SHA1 hash function is considered insecure.
+    pattern: (SHA1_Init\s*\()|(EVP_sha1\s*\()|(EVP_sha1_md5\s*\()
+    pattern_id: insecure-sha1-usage
+    severity: Warning
+    description: The MD2 and MD4 hash functions are considered insecure.
+    pattern: (MD2_Init\s*\()|(EVP_md2\s*\()|(MD4_Init\s*\()|(EVP_md4\s*\()
+    pattern_id: insecure-md2-md4-usage
+    severity: Warning
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD2 and MD4 hash functions are considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD2_Init(...)"}, {"pattern": "EVP_md2(...)"}, {"pattern": "MD4_Init(...)"}, {"pattern": "EVP_md4(...)"}]}]
+    pattern_id: md2-or-md4-hash-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD5 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD5_Init(...)"}, {"pattern": "EVP_md5(...)"}]}]
+    pattern_id: md5-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The SHA1 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "SHA1_Init(...)"}, {"pattern": "EVP_sha1(...)"}, {"pattern": "EVP_md5_sha1(...)"}]}]
+    pattern_id: sha1-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD2 and MD4 hash functions are considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD2_Init(...)"}, {"pattern": "EVP_md2(...)"}, {"pattern": "MD4_Init(...)"}, {"pattern": "EVP_md4(...)"}]}]
+    pattern_id: md2-or-md4-hash-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD5 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD5_Init(...)"}, {"pattern": "EVP_md5(...)"}]}]
+    pattern_id: md5-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The SHA1 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "SHA1_Init(...)"}, {"pattern": "EVP_sha1(...)"}, {"pattern": "EVP_md5_sha1(...)"}]}]
+    pattern_id: sha1-usage
+    severity: WARNING
+
+CWE-331:
+    description: The NIST Prime 192 elliptic curve's security level is too low and it's considered outdated.
+    pattern: BN_get0_nist_prime_192\s*\(
+    pattern_id: outdated-nist-prime-192-usage
+    severity: Warning
+    additional_cwes:
+      - CWE-331: Insufficient Entropy
+    description: Creation of RSA Key with insufficient size.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$X = $KEYSIZE;\n...\n$RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);\n"}, {"pattern": "$RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);"}, {"pattern": "$X = $KEYSIZE;\n...\nEVP_RSA_gen($X);\n"}, {"pattern": "EVP_RSA_gen($KEYSIZE)"}]}, {"metavariable-regex": {"metavariable": "$KEYSIZE", "regex": "(512|768|1024|1536)"}}, {"metavariable-regex": {"metavariable": "$RSAGENFUNCTION", "regex": "RSA_generate_key\\w*"}}]
+    pattern_id: rsa-key-size-insufficient
+    severity: WARNING
+    additional_cwes:
+      - CWE-331: Insufficient Entropy
+    description: Creation of RSA Key with insufficient size.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$X = $KEYSIZE;\n...\n$RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);\n"}, {"pattern": "$RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);"}, {"pattern": "$X = $KEYSIZE;\n...\nEVP_RSA_gen($X);\n"}, {"pattern": "EVP_RSA_gen($KEYSIZE)"}]}, {"metavariable-regex": {"metavariable": "$KEYSIZE", "regex": "(512|768|1024|1536)"}}, {"metavariable-regex": {"metavariable": "$RSAGENFUNCTION", "regex": "RSA_generate_key\\w*"}}]
+    pattern_id: rsa-key-size-insufficient
+    severity: WARNING
+
+CWE-335:
+    additional_cwes:
+      - CWE-335: Incorrect Usage of Seeds in Pseudo-Random Number Generator (PRNG)
+    description: Use of fixed seed for PRNG.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$SEED = \"...\""}, {"pattern": "$SEED = (int $Y)"}]}, {"metavariable-regex": {"metavariable": "$SEED", "regex": "(seed|rngSeed|rng_seed|prng_seed|prngSeed)"}}]
+    pattern_id: fixed-seed-usage
+    severity: WARNING
+
+CWE-338:
+    additional_cwes:
+      - CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "rand(...)"}]
+    pattern_id: crypto-weak-prng
+    severity: WARNING
+    additional_cwes:
+      - CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "rand(...)"}]
+    pattern_id: crypto-weak-prng
+    severity: WARNING
+
+CWE-347:
+    description: It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+    pattern: (EVP_\w+_cbc\s*\()|(EVP_\w+_ctr\s*\()|(EVP_\w+_xts\s*\()|(EVP_\w+_cfb\w\s*\()|(EVP_\w+_ofb\s*\()
+    pattern_id: unauthenticated-encryption-usage
+    severity: Warning
+    additional_cwes:
+      - CWE-347: Improper Verification of Cryptographic Signature
+    description: It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_\\w+_cbc\\s*\\("}, {"pattern-regex": "EVP_\\w+_ctr\\s*\\("}, {"pattern-regex": "EVP_\\w+_xts\\s*\\("}, {"pattern-regex": "EVP_\\w+_cfb\\w\\s*\\("}, {"pattern-regex": "EVP_\\w+_ofb\\s*\\("}]}]
+    pattern_id: unauthenticated-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-347: Improper Verification of Cryptographic Signature
+    description: It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_\\w+_cbc\\s*\\("}, {"pattern-regex": "EVP_\\w+_ctr\\s*\\("}, {"pattern-regex": "EVP_\\w+_xts\\s*\\("}, {"pattern-regex": "EVP_\\w+_cfb\\w\\s*\\("}, {"pattern-regex": "EVP_\\w+_ofb\\s*\\("}]}]
+    pattern_id: unauthenticated-encryption-usage
+    severity: WARNING
+
+CWE-377:
+    description: Usage of tmpnam, which generates temporary file without exclusive access. It may lead to race conditions.
+    pattern: tmpnam\s*\(\s*\w+\s*\)
+    pattern_id: insecure-tmpnam-usage
+    severity: Warning
+
+CWE-477:
+    description: Usage of obsolete function getpw, which can overflow the buffer passed to the second parameter.
+    pattern: getpw\s*\(\s*\w+\s*,\s*\w+\s*\)
+    pattern_id: obsolete-getpw-usage
+    severity: Warning
+
+CWE-590:
+    additional_cwes:
+      - CWE-590: Free of Memory not on the Heap
+    description: Free of memory not on the heap
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$TYPE $X; ... free(&$X);"}, {"pattern": "$TYPE $ARR[$Z]; ... free($ARR);"}]}, {"pattern-inside": "$TYPE2 $FUNC(...){ ... }"}, {"pattern-not-inside": "$TYPE $X;\n...\nreturn $Y;\n...\nfree(&$X);\n"}, {"pattern-not-inside": "$TYPE $ARR[$Z];\n...\nreturn $Y;\n...\nfree($ARR);\n"}]
+    pattern_id: invalid-free
+    severity: WARNING
+    additional_cwes:
+      - CWE-590: Free of Memory not on the Heap
+    description: Free of memory not on the heap
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$TYPE $X; ... free(&$X);"}, {"pattern": "$TYPE $ARR[$Z]; ... free($ARR);"}]}, {"pattern-inside": "$TYPE2 $FUNC(...){ ... }"}, {"pattern-not-inside": "$TYPE $X;\n...\nreturn $Y;\n...\nfree(&$X);\n"}, {"pattern-not-inside": "$TYPE $ARR[$Z];\n...\nreturn $Y;\n...\nfree($ARR);\n"}]
+    pattern_id: invalid-free
+    severity: WARNING
+
+CWE-676:
+    description: Usage of strtok is insecure as it's not thread-safe and can also often lead to buffer overflow vulnerabilities
+    pattern: strtok\s*\(\s*\w+\s*,\s*\w+\s*\)
+    pattern_id: insecure-strtok-usage
+    severity: Warning
+
+CWE-680:
+    additional_cwes:
+      - CWE-680: Integer Overflow to Buffer Overflow
+    description: Potential integer overflow may result in buffer overflow
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "malloc($X * ...)"}, {"pattern-not-inside": "if($X < ...){...}\n...\n"}, {"pattern-not-inside": "if ($X > ...){...}\n...\n"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-integer-overflow-to-buffer-overflow
+    severity: WARNING
+    additional_cwes:
+      - CWE-680: Integer Overflow to Buffer Overflow
+    description: Potential integer overflow may result in buffer overflow
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "malloc($X * ...)"}, {"pattern-not-inside": "if($X < ...){...}\n...\n"}, {"pattern-not-inside": "if ($X > ...){...}\n...\n"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-integer-overflow-to-buffer-overflow
+    severity: WARNING
+
+CWE-78:
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "system($X)"}, {"pattern-not": "system(\"...\")"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-command-injection
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "system($X)"}, {"pattern-not": "system(\"...\")"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-command-injection
+    severity: WARNING
+
+CWE-798:
+    additional_cwes:
+      - CWE-798: Use of Hard-coded Credentials
+    description: Use of hardcoded keys/credentials. Prefer using a key/secret management system.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$SECRET = ..."}, {"metavariable-regex": {"metavariable": "$SECRET", "regex": "(\\w*password\\w*|\\w*secret\\w*|\\w*privateKey\\w*|\\w*private_key\\w*|\\w*secret_key\\w*|\\w*secretKey\\w*)"}}]
+    pattern_id: hardcoded-key-usage
+    severity: WARNING
+
+
+Language: cpp
+CWE-119:
+    additional_cwes: Improper Restriction of Operations within the Bounds of a Memory Buffer
+    description: Potential out of bounds access due to improper validation of return values of .*snprintf.* functions
+
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$RET = $FUN($BUF, ...);\n...\n$BUF[$RET] = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n*($BUF + $RET) = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n$FUNC($BUF + $RET, ...);\n"}]}, {"pattern-not": "$RET = $FUN($BUF, ...);\n...\nif ($RET < $Y) {...}\n"}, {"metavariable-regex": {"metavariable": "$FUN", "regex": ".*(snprintf).*"}}]
+    pattern_id: bugprone-snprintf
+    severity: WARNING
+    additional_cwes: Improper Restriction of Operations within the Bounds of a Memory Buffer
+    description: Potential out of bounds access due to improper validation of return values of .*snprintf.* functions
+
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$RET = $FUN($BUF, ...);\n...\n$BUF[$RET] = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n*($BUF + $RET) = ...;\n"}, {"pattern": "$RET = $FUN($BUF, ...);\n...\n$FUNC($BUF + $RET, ...);\n"}]}, {"pattern-not": "$RET = $FUN($BUF, ...);\n...\nif ($RET < $Y) {...}\n"}, {"metavariable-regex": {"metavariable": "$FUN", "regex": ".*(snprintf).*"}}]
+    pattern_id: bugprone-snprintf
+    severity: WARNING
+
+CWE-120:
+    additional_cwes:
+      - CWE-120: Classic buffer overflow
+    description: Potential buffer overflow due to usage of sprintf
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "sprintf(..., $FORMAT, ...)"}, {"metavariable-regex": {"metavariable": "$FORMAT", "regex": ".*%s.*"}}]
+    pattern_id: vulnerable-sprintf
+    severity: WARNING
+    additional_cwes:
+      - CWE-120: Classic buffer overflow
+    description: Potential buffer overflow due to usage of sprintf
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "sprintf(..., $FORMAT, ...)"}, {"metavariable-regex": {"metavariable": "$FORMAT", "regex": ".*%s.*"}}]
+    pattern_id: vulnerable-sprintf
+    severity: WARNING
+
+CWE-121:
+    additional_cwes:
+      - CWE-121: Stack-based Buffer Overflow
+    description: Calls to memcpy that write to a stack buffer
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$FUN($BUF, ..., $LEN)"}, {"pattern-inside": "$TYPE $BUF[$Y];\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not-inside": "$TYPE $BUF[$Y];\n...\nif($LEN < $Z) {...}\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not": "$FUN($BUF, \"...\", ...)"}, {"metavariable-pattern": {"metavariable": "$FUN", "pattern-either": [{"pattern": "memcpy"}, {"pattern": "memmove"}]}}]
+    pattern_id: write-to-stack-buffer
+    severity: WARNING
+    additional_cwes:
+      - CWE-121: Stack-based Buffer Overflow
+    description: Calls to memcpy that write to a stack buffer
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$FUN($BUF, ..., $LEN)"}, {"pattern-inside": "$TYPE $BUF[$Y];\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not-inside": "$TYPE $BUF[$Y];\n...\nif($LEN < $Z) {...}\n...\n$FUN($BUF, ..., $LEN);\n"}, {"pattern-not": "$FUN($BUF, \"...\", ...)"}, {"metavariable-pattern": {"metavariable": "$FUN", "pattern-either": [{"pattern": "memcpy"}, {"pattern": "memmove"}]}}]
+    pattern_id: write-to-stack-buffer
+    severity: WARNING
+
+CWE-1240:
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The Blowfish encryption algorithm has suboptimal security and speed.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_bf_\\w+\\s*\\("}, {"pattern-regex": "BF_\\w+crypt\\s*\\("}]}]
+    pattern_id: blowfish-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_des_\\w+\\s*\\("}, {"pattern-regex": "DES_\\w+crypt\\s*\\("}]}]
+    pattern_id: des-algorithm-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The Blowfish encryption algorithm has suboptimal security and speed.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_bf_\\w+\\s*\\("}, {"pattern-regex": "BF_\\w+crypt\\s*\\("}]}]
+    pattern_id: blowfish-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation
+    description: The DES, 3DES and DES-X algorithms are insecure. Please avoid using them.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_des_\\w+\\s*\\("}, {"pattern-regex": "DES_\\w+crypt\\s*\\("}]}]
+    pattern_id: des-algorithm-usage
+    severity: WARNING
+
+CWE-323:
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-regex": "EVP_\\w+_ecb\\s*\\("}]
+    pattern_id: ecb-mode-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: ECB mode encryption is both deterministic and unauthenticated. Do not use it unless this is very explicitly what you need.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-regex": "EVP_\\w+_ecb\\s*\\("}]
+    pattern_id: ecb-mode-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: Use of fixed nonce as input to encryption/signing is generally considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$NONCE = \"...\""}, {"pattern": "$NONCE = (int $Y)"}]}, {"metavariable-regex": {"metavariable": "$NONCE", "regex": "(\\w*nonce\\w*|\\biv\\b|\\w*initializationVector\\w*|\\w*initialization_vector\\w*)"}}]
+    pattern_id: fixed-nonce-usage
+    severity: WARNING
+
+CWE-328:
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD2 and MD4 hash functions are considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD2_Init(...)"}, {"pattern": "EVP_md2(...)"}, {"pattern": "MD4_Init(...)"}, {"pattern": "EVP_md4(...)"}]}]
+    pattern_id: md2-or-md4-hash-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD5 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD5_Init(...)"}, {"pattern": "EVP_md5(...)"}]}]
+    pattern_id: md5-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The SHA1 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "SHA1_Init(...)"}, {"pattern": "EVP_sha1(...)"}, {"pattern": "EVP_md5_sha1(...)"}]}]
+    pattern_id: sha1-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD2 and MD4 hash functions are considered insecure.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD2_Init(...)"}, {"pattern": "EVP_md2(...)"}, {"pattern": "MD4_Init(...)"}, {"pattern": "EVP_md4(...)"}]}]
+    pattern_id: md2-or-md4-hash-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The MD5 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "MD5_Init(...)"}, {"pattern": "EVP_md5(...)"}]}]
+    pattern_id: md5-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-328: Use of Weak Hash
+    description: The SHA1 hash function is considered insecure
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "SHA1_Init(...)"}, {"pattern": "EVP_sha1(...)"}, {"pattern": "EVP_md5_sha1(...)"}]}]
+    pattern_id: sha1-usage
+    severity: WARNING
+
+CWE-331:
+    additional_cwes:
+      - CWE-331: Insufficient Entropy
+    description: Creation of RSA Key with insufficient size.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$X = $KEYSIZE;\n...\n$RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);\n"}, {"pattern": "$RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);"}, {"pattern": "$X = $KEYSIZE;\n...\nEVP_RSA_gen($X);\n"}, {"pattern": "EVP_RSA_gen($KEYSIZE)"}]}, {"metavariable-regex": {"metavariable": "$KEYSIZE", "regex": "(512|768|1024|1536)"}}, {"metavariable-regex": {"metavariable": "$RSAGENFUNCTION", "regex": "RSA_generate_key\\w*"}}]
+    pattern_id: rsa-key-size-insufficient
+    severity: WARNING
+    additional_cwes:
+      - CWE-331: Insufficient Entropy
+    description: Creation of RSA Key with insufficient size.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$X = $KEYSIZE;\n...\n$RSAGENFUNCTION($ARG1,$X,$ARG2,$ARG3);\n"}, {"pattern": "$RSAGENFUNCTION($ARG1,$KEYSIZE,$ARG2,$ARG3);"}, {"pattern": "$X = $KEYSIZE;\n...\nEVP_RSA_gen($X);\n"}, {"pattern": "EVP_RSA_gen($KEYSIZE)"}]}, {"metavariable-regex": {"metavariable": "$KEYSIZE", "regex": "(512|768|1024|1536)"}}, {"metavariable-regex": {"metavariable": "$RSAGENFUNCTION", "regex": "RSA_generate_key\\w*"}}]
+    pattern_id: rsa-key-size-insufficient
+    severity: WARNING
+
+CWE-335:
+    description: Use of fixed seed for PRNG
+    pattern: \b(std::mt19937|std::mt19937_64|std::minstd_rand|std::minstd_rand0|std::default_random_engine)\s*(\{|\()\s*\d*\s*(\}|\)|\/)
+    pattern_id: fixed-seed-prng-usage
+    severity: Warning
+    additional_cwes:
+      - CWE-335: Incorrect Usage of Seeds in Pseudo-Random Number Generator (PRNG)
+    description: Use of fixed seed for PRNG.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$SEED = \"...\""}, {"pattern": "$SEED = (int $Y)"}]}, {"metavariable-regex": {"metavariable": "$SEED", "regex": "(seed|rngSeed|rng_seed|prng_seed|prngSeed)"}}]
+    pattern_id: fixed-seed-usage
+    severity: WARNING
+
+CWE-338:
+    additional_cwes:
+      - CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "rand(...)"}]
+    pattern_id: crypto-weak-prng
+    severity: WARNING
+    additional_cwes:
+      - CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "rand(...)"}]
+    pattern_id: crypto-weak-prng
+    severity: WARNING
+
+CWE-347:
+    additional_cwes:
+      - CWE-347: Improper Verification of Cryptographic Signature
+    description: It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_\\w+_cbc\\s*\\("}, {"pattern-regex": "EVP_\\w+_ctr\\s*\\("}, {"pattern-regex": "EVP_\\w+_xts\\s*\\("}, {"pattern-regex": "EVP_\\w+_cfb\\w\\s*\\("}, {"pattern-regex": "EVP_\\w+_ofb\\s*\\("}]}]
+    pattern_id: unauthenticated-encryption-usage
+    severity: WARNING
+    additional_cwes:
+      - CWE-347: Improper Verification of Cryptographic Signature
+    description: It looks like you are using an unauthenticated mode of encryption. Don't use this unless you have a good reason or are separately adding authentication.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern-regex": "EVP_\\w+_cbc\\s*\\("}, {"pattern-regex": "EVP_\\w+_ctr\\s*\\("}, {"pattern-regex": "EVP_\\w+_xts\\s*\\("}, {"pattern-regex": "EVP_\\w+_cfb\\w\\s*\\("}, {"pattern-regex": "EVP_\\w+_ofb\\s*\\("}]}]
+    pattern_id: unauthenticated-encryption-usage
+    severity: WARNING
+
+CWE-590:
+    additional_cwes:
+      - CWE-590: Free of Memory not on the Heap
+    description: Free of memory not on the heap
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$TYPE $X; ... free(&$X);"}, {"pattern": "$TYPE $ARR[$Z]; ... free($ARR);"}]}, {"pattern-inside": "$TYPE2 $FUNC(...){ ... }"}, {"pattern-not-inside": "$TYPE $X;\n...\nreturn $Y;\n...\nfree(&$X);\n"}, {"pattern-not-inside": "$TYPE $ARR[$Z];\n...\nreturn $Y;\n...\nfree($ARR);\n"}]
+    pattern_id: invalid-free
+    severity: WARNING
+    additional_cwes:
+      - CWE-590: Free of Memory not on the Heap
+    description: Free of memory not on the heap
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern-either": [{"pattern": "$TYPE $X; ... free(&$X);"}, {"pattern": "$TYPE $ARR[$Z]; ... free($ARR);"}]}, {"pattern-inside": "$TYPE2 $FUNC(...){ ... }"}, {"pattern-not-inside": "$TYPE $X;\n...\nreturn $Y;\n...\nfree(&$X);\n"}, {"pattern-not-inside": "$TYPE $ARR[$Z];\n...\nreturn $Y;\n...\nfree($ARR);\n"}]
+    pattern_id: invalid-free
+    severity: WARNING
+
+CWE-611:
+    description: Use of XML external entity
+    pattern: \bxmlReadDoc\s*\(\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*[^,]*\b(XML_PARSE_NOENT|XML_PARSE_DTDLOAD)\s*\)
+    pattern_id: xml-external-entity-usage
+    severity: Warning
+
+CWE-665:
+    description: Uses deprecated auto_ptr, which can lead to undefined behavior.
+    pattern: \bstd::auto_ptr<\s*\w+\s*>
+    pattern_id: deprecated-auto_ptr-usage
+    severity: Warning
+
+CWE-680:
+    additional_cwes:
+      - CWE-680: Integer Overflow to Buffer Overflow
+    description: Potential integer overflow may result in buffer overflow
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "malloc($X * ...)"}, {"pattern-not-inside": "if($X < ...){...}\n...\n"}, {"pattern-not-inside": "if ($X > ...){...}\n...\n"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-integer-overflow-to-buffer-overflow
+    severity: WARNING
+    additional_cwes:
+      - CWE-680: Integer Overflow to Buffer Overflow
+    description: Potential integer overflow may result in buffer overflow
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "malloc($X * ...)"}, {"pattern-not-inside": "if($X < ...){...}\n...\n"}, {"pattern-not-inside": "if ($X > ...){...}\n...\n"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-integer-overflow-to-buffer-overflow
+    severity: WARNING
+
+CWE-78:
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "system($X)"}, {"pattern-not": "system(\"...\")"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-command-injection
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "system($X)"}, {"pattern-not": "system(\"...\")"}, {"metavariable-regex": {"metavariable": "$X", "regex": "^(?![A-Z_]+).*$"}}]
+    pattern_id: potential-command-injection
+    severity: WARNING
+
+CWE-798:
+    additional_cwes:
+      - CWE-798: Use of Hard-coded Credentials
+    description: Use of hardcoded keys/credentials. Prefer using a key/secret management system.
+    languages:
+      - c
+      - cpp
+    pattern: [{"pattern": "$SECRET = ..."}, {"metavariable-regex": {"metavariable": "$SECRET", "regex": "(\\w*password\\w*|\\w*secret\\w*|\\w*privateKey\\w*|\\w*private_key\\w*|\\w*secret_key\\w*|\\w*secretKey\\w*)"}}]
+    pattern_id: hardcoded-key-usage
+    severity: WARNING
+
+
+Language: csharp
+CWE-1004:
+    additional_cwes: Sensitive cookie without 'HttpOnly' flag
+    description: The `HttpOnly` attribute when set to `true` protects the cookie value from being accessed by
+client side JavaScript such
+as reading the `document.cookie` values. By enabling this protection, a website that is
+vulnerable to
+Cross-Site Scripting (XSS) will be able to block malicious scripts from accessing the cookie
+value from JavaScript.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.HttpOnly = false;\n"}]
+    pattern_id: cookie-without-http-only-flag
+    severity: WARNING
+    additional_cwes: Sensitive cookie without 'HttpOnly' flag
+    description: The `HttpOnly` attribute when set to `true` protects the cookie value from being accessed by
+client side JavaScript such
+as reading the `document.cookie` values. By enabling this protection, a website that is
+vulnerable to
+Cross-Site Scripting (XSS) will be able to block malicious scripts from accessing the cookie
+value from JavaScript.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.HttpOnly = false;\n"}]
+    pattern_id: cookie-without-http-only-flag
+    severity: WARNING
+
+CWE-22:
+    additional_cwes: Improper limitation of a pathname to a restricted directory(Path Traversal)
+    description: User controlled malicious relative path could lead to path traversal vulnerabilities
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: path-traversal
+    severity: WARNING
+    additional_cwes: Improper limitation of a pathname to a restricted directory(Path Traversal)
+    description: User controlled malicious relative path could lead to path traversal vulnerabilities
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: path-traversal
+    severity: WARNING
+
+CWE-295:
+    additional_cwes: Improper Certificate Validation
+    description: The `ServicePointManager.ServerCertificateValidationCallback` event has been set
+to always return `true`, which effectively disables the validation of server
+certificates.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Net;\n...\n"}, {"pattern": "ServicePointManager.ServerCertificateValidationCallback += $CALLBACK;"}, {"metavariable-pattern": {"metavariable": "$CALLBACK", "patterns": [{"pattern-either": [{"pattern": "$RETURNTYPE $FUNC(...) { return true; }"}, {"pattern": "(...) => true;"}]}]}}]
+    pattern_id: crypto-certificate-validation-disabled
+    severity: WARNING
+    additional_cwes: Improper Certificate Validation
+    description: The `ServicePointManager.ServerCertificateValidationCallback` event has been set
+to always return `true`, which effectively disables the validation of server
+certificates.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Net;\n...\n"}, {"pattern": "ServicePointManager.ServerCertificateValidationCallback += $CALLBACK;"}, {"metavariable-pattern": {"metavariable": "$CALLBACK", "patterns": [{"pattern-either": [{"pattern": "$RETURNTYPE $FUNC(...) { return true; }"}, {"pattern": "(...) => true;"}]}]}}]
+    pattern_id: crypto-certificate-validation-disabled
+    severity: WARNING
+
+CWE-327:
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: DES, TripleDES and RC2 are all considered broken or insecure cryptographic algorithms.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Security.Cryptography;\n...\n"}, {"pattern-either": [{"pattern-regex": ".*DES\\.Create\\(\\);"}, {"pattern": "new DESCryptoServiceProvider();"}, {"pattern-regex": ".*TripleDES\\.Create\\(\\);"}, {"pattern": "new TripleDESCryptoServiceProvider();"}, {"pattern-regex": ".*RC2\\.Create\\(\\);"}, {"pattern": "new RC2CryptoServiceProvider();"}]}]
+    pattern_id: crypto-weak-cipher-algorithm
+    severity: WARNING
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: Cryptographic algorithms provide many different modes of operation, only some of which provide
+message integrity. Without message integrity it could be possible for an adversary to attempt
+to tamper with the ciphertext which could lead to compromising the encryption key. This ciphermode is unsafe.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Security.Cryptography;\n...\n"}, {"metavariable-regex": {"metavariable": "$CIPHER", "regex": "^(ECB|CBC|OFB|CFB|CTS)$"}}, {"pattern": "CipherMode.$CIPHER"}]
+    pattern_id: crypto-weak-cipher-mode
+    severity: WARNING
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: Use of a broken or risky cryptographic algorithm. MD5 and SHA1 hash algorithms have been found to be vulnerable to producing collisions.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$HASH_PROVIDER", "regex": "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"}}, {"pattern": "new $HASH_PROVIDER"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$HASH_CLASS", "regex": "^System.Security.Cryptography.(SHA1|MD5)$"}}, {"pattern": "$HASH_CLASS.$METHOD();"}]}]}]
+    pattern_id: crypto-weak-hashing-function
+    severity: WARNING
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: DES, TripleDES and RC2 are all considered broken or insecure cryptographic algorithms.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Security.Cryptography;\n...\n"}, {"pattern-either": [{"pattern-regex": ".*DES\\.Create\\(\\);"}, {"pattern": "new DESCryptoServiceProvider();"}, {"pattern-regex": ".*TripleDES\\.Create\\(\\);"}, {"pattern": "new TripleDESCryptoServiceProvider();"}, {"pattern-regex": ".*RC2\\.Create\\(\\);"}, {"pattern": "new RC2CryptoServiceProvider();"}]}]
+    pattern_id: crypto-weak-cipher-algorithm
+    severity: WARNING
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: Cryptographic algorithms provide many different modes of operation, only some of which provide
+message integrity. Without message integrity it could be possible for an adversary to attempt
+to tamper with the ciphertext which could lead to compromising the encryption key. This ciphermode is unsafe.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Security.Cryptography;\n...\n"}, {"metavariable-regex": {"metavariable": "$CIPHER", "regex": "^(ECB|CBC|OFB|CFB|CTS)$"}}, {"pattern": "CipherMode.$CIPHER"}]
+    pattern_id: crypto-weak-cipher-mode
+    severity: WARNING
+    additional_cwes: Use of a broken or risky cryptographic algorithm
+    description: Use of a broken or risky cryptographic algorithm. MD5 and SHA1 hash algorithms have been found to be vulnerable to producing collisions.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$HASH_PROVIDER", "regex": "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"}}, {"pattern": "new $HASH_PROVIDER"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$HASH_CLASS", "regex": "^System.Security.Cryptography.(SHA1|MD5)$"}}, {"pattern": "$HASH_CLASS.$METHOD();"}]}]}]
+    pattern_id: crypto-weak-hashing-function
+    severity: WARNING
+
+CWE-338:
+    additional_cwes: Use of cryptographically weak Pseudo-Random Number Generator (PRNG)
+    description: Use of a weak random value can lead to vulnerabilities when used in certain security critical contexts.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "(Random $RNG).$METHOD(...);"}]
+    pattern_id: crypto-weak-pseudo-random-number-generator
+    severity: WARNING
+    additional_cwes: Use of cryptographically weak Pseudo-Random Number Generator (PRNG)
+    description: Use of a weak random value can lead to vulnerabilities when used in certain security critical contexts.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "(Random $RNG).$METHOD(...);"}]
+    pattern_id: crypto-weak-pseudo-random-number-generator
+    severity: WARNING
+
+CWE-352:
+    additional_cwes: Cross-Site Request Forgery (CSRF)
+    description: The application failed to protect against Cross-Site Request Forgery (CSRF)
+due to not including the `[ValidateAntiForgeryToken]` attribute on an
+HTTP method handler that could change user state (usually in the form of POST or PUT
+methods).
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "[$HTTPMETHOD]\npublic $RET $FOO(...) {\n  ...\n}\n"}, {"pattern-not": "[ValidateAntiForgeryToken]\npublic $RET $FOO(...) {\n  ...\n}\n"}, {"metavariable-regex": {"metavariable": "$HTTPMETHOD", "regex": "Http(Post|Delete|Patch|Put)"}}]
+    pattern_id: csrf
+    severity: WARNING
+    additional_cwes: Cross-Site Request Forgery (CSRF)
+    description: The application failed to protect against Cross-Site Request Forgery (CSRF)
+due to not including the `[ValidateAntiForgeryToken]` attribute on an
+HTTP method handler that could change user state (usually in the form of POST or PUT
+methods).
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "[$HTTPMETHOD]\npublic $RET $FOO(...) {\n  ...\n}\n"}, {"pattern-not": "[ValidateAntiForgeryToken]\npublic $RET $FOO(...) {\n  ...\n}\n"}, {"metavariable-regex": {"metavariable": "$HTTPMETHOD", "regex": "Http(Post|Delete|Patch|Put)"}}]
+    pattern_id: csrf
+    severity: WARNING
+
+CWE-502:
+    additional_cwes: Deserialization of potentially untrusted data
+    description: Unsafe deserialization methods used on untrusted data can lead to deserialization related vulnerabilities
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserialize(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserializeMethod(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Soap.SoapFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Runtime.Serialization.NetDataContractSerializer $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.UI.LosFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.UI.ObjectStateFormatter $OBJ).Deserialize(...)"}, {"pattern": "(MongoDB.Bson.Serialization.BsonSerializer $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.Script.Serialization.JavaScriptSerializer $OBJ).Deserialize(...)"}]}]
+    pattern_id: insecure-deserialization
+    severity: WARNING
+    additional_cwes: Deserialization of potentially untrusted data
+    description: Unsafe deserialization methods used on untrusted data can lead to deserialization related vulnerabilities
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserialize(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter $OBJ).UnsafeDeserializeMethod(...)"}, {"pattern": "(System.Runtime.Serialization.Formatters.Soap.SoapFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Runtime.Serialization.NetDataContractSerializer $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.UI.LosFormatter $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.UI.ObjectStateFormatter $OBJ).Deserialize(...)"}, {"pattern": "(MongoDB.Bson.Serialization.BsonSerializer $OBJ).Deserialize(...)"}, {"pattern": "(System.Web.Script.Serialization.JavaScriptSerializer $OBJ).Deserialize(...)"}]}]
+    pattern_id: insecure-deserialization
+    severity: WARNING
+
+CWE-521:
+    additional_cwes: Weak password requirements
+    description: Weak password requirements
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "new PasswordValidator\n{\n  ...,\n};\n"}, {"pattern": "new PasswordValidator\n{\n  ...,\n  RequiredLength = $LEN,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireNonLetterOrDigit = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireDigit = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireLowercase = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireUppercase = true,\n  ...,\n};\n"}, {"metavariable-comparison": {"comparison": "$LEN < 8", "metavariable": "$LEN"}}]
+    pattern_id: weak-password-requirements
+    severity: WARNING
+    additional_cwes: Weak password requirements
+    description: Weak password requirements
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "new PasswordValidator\n{\n  ...,\n};\n"}, {"pattern": "new PasswordValidator\n{\n  ...,\n  RequiredLength = $LEN,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireNonLetterOrDigit = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireDigit = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireLowercase = true,\n  ...,\n};\n"}, {"pattern-not": "new PasswordValidator\n{\n  ...,\n  RequireUppercase = true,\n  ...,\n};\n"}, {"metavariable-comparison": {"comparison": "$LEN < 8", "metavariable": "$LEN"}}]
+    pattern_id: weak-password-requirements
+    severity: WARNING
+
+CWE-554:
+    description: Sensitive information stored in web forms controls may be leaked to the client side if encryption mode is not used.
+    pattern: <system\.web>\s*<pages[^>]*viewStateEncryptionMode="(?:Auto|Never)"[^>]*/>\s*</system\.web>
+    pattern_id: webform-encryption-mode-leakage
+    severity: Warning
+    description: The view state could be altered by attacker since enableViewStateMac is disabled
+    pattern: <system\.web>\s*<pages[^>]*enableViewStateMac="false"[^>]*/>\s*</system\.web>
+    pattern_id: viewstate-mac-disabled
+    severity: Warning
+    additional_cwes: ASP.NET Misconfiguration: Not Using Input Validation Framework
+    description: By using the `[ValidateInput(false)]` attribute in a controller
+class, the application will disable request validation for that
+method. This disables ASP.NET from examining requests for injection
+attacks such as Cross-Site-Scripting (XSS).
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "[ValidateInput(false)]\npublic $RET $FOO(...)\n{\n  ...\n}\n"}]
+    pattern_id: input-validation
+    severity: WARNING
+    additional_cwes: ASP.NET Misconfiguration: Not Using Input Validation Framework
+    description: By using the `[ValidateInput(false)]` attribute in a controller
+class, the application will disable request validation for that
+method. This disables ASP.NET from examining requests for injection
+attacks such as Cross-Site-Scripting (XSS).
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "[ValidateInput(false)]\npublic $RET $FOO(...)\n{\n  ...\n}\n"}]
+    pattern_id: input-validation
+    severity: WARNING
+
+CWE-601:
+    additional_cwes: URL redirection to untrusted site (open redirect)
+    description: The application may allow open redirects if created using user supplied input. Open redirects
+are
+commonly
+abused in phishing attacks where the original domain or URL looks like a legitimate link, but
+then
+redirects a user to a malicious site.
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: unvalidated-redirect
+    severity: WARNING
+    additional_cwes: URL redirection to untrusted site (open redirect)
+    description: The application may allow open redirects if created using user supplied input. Open redirects
+are
+commonly
+abused in phishing attacks where the original domain or URL looks like a legitimate link, but
+then
+redirects a user to a malicious site.
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: unvalidated-redirect
+    severity: WARNING
+
+CWE-611:
+    additional_cwes: Improper restriction of XML external entity reference
+    description: By setting `XsltSettings.EnableScript` to true, an adversary who is able to influence the
+loaded
+XSL document could directly inject code to compromise the system. It is strongly
+recommended that an alternative approach is used to work with XML data.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"pattern": "new XsltSettings() {EnableScript = true};"}, {"pattern": "var $SETTINGS = new XsltSettings();\n...\n$SETTINGS.EnableScript = true;\n"}]}]
+    pattern_id: unsafe-xslt-setting
+    severity: WARNING
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: Incorrectly configured XML parser could be vulnerable to XML External Entity processing
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: xxe-injection
+    severity: WARNING
+    additional_cwes: Improper restriction of XML external entity reference
+    description: By setting `XsltSettings.EnableScript` to true, an adversary who is able to influence the
+loaded
+XSL document could directly inject code to compromise the system. It is strongly
+recommended that an alternative approach is used to work with XML data.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"pattern": "new XsltSettings() {EnableScript = true};"}, {"pattern": "var $SETTINGS = new XsltSettings();\n...\n$SETTINGS.EnableScript = true;\n"}]}]
+    pattern_id: unsafe-xslt-setting
+    severity: WARNING
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: Incorrectly configured XML parser could be vulnerable to XML External Entity processing
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: xxe-injection
+    severity: WARNING
+
+CWE-614:
+    additional_cwes: Sensitive cookie in HTTPS session without 'Secure' attribute
+    description: The `Secure` attribute when set to `true` protects the cookie value from being
+transmitted over clear text
+communication paths such as HTTP. By enabling this protection, the cookie will only be sent
+over HTTPS.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.Secure = false;\n"}]
+    pattern_id: cookie-without-ssl-flag
+    severity: WARNING
+    additional_cwes: Sensitive cookie in HTTPS session without 'Secure' attribute
+    description: The `Secure` attribute when set to `true` protects the cookie value from being
+transmitted over clear text
+communication paths such as HTTP. By enabling this protection, the cookie will only be sent
+over HTTPS.
+
+    languages:
+      - csharp
+    pattern: [{"pattern": "var $COOKIE = new HttpCookie(...);\n...\n$COOKIE.Secure = false;\n"}]
+    pattern_id: cookie-without-ssl-flag
+    severity: WARNING
+
+CWE-643:
+    additional_cwes: Improper neutralization of data within XPath expressions(XPath Injection)
+    description: Unsanitized input in XPath query can lead to XPath Injections
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Xml;\n...\n"}, {"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants)$"}}, {"metavariable-regex": {"metavariable": "$TY", "regex": "^(XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"}}, {"pattern": "($TY $VAR).$FUNC(<...$ARG...>, ...)"}, {"pattern-not": "($TY $VAR).$FUNC(\"...\", ...)"}]}, {"patterns": [{"pattern-inside": "using System.Xml.Linq;\n...\n"}, {"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(XPathEvaluate|XPathSelectElement|XPathSelectElements)$"}}, {"pattern": "$VAR.$FUNC(<...$ARG...>, ...)"}, {"pattern-not": "$VAR.$FUNC(\"...\", ...)"}]}, {"patterns": [{"pattern-inside": "using System.Xml.Schema;\n...\n"}, {"pattern-either": [{"patterns": [{"pattern": "$VAR.XPath = <...$ARG...>;"}, {"pattern-not": "$VAR.XPath = \"...\""}]}, {"patterns": [{"pattern": "new XmlSchemaXPath { XPath = <...$ARG...> };"}, {"focus-metavariable": "$ARG"}]}]}]}]}]
+    pattern_id: xpath-injection
+    severity: INFO
+    additional_cwes: Improper neutralization of data within XPath expressions(XPath Injection)
+    description: Unsanitized input in XPath query can lead to XPath Injections
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Xml;\n...\n"}, {"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants)$"}}, {"metavariable-regex": {"metavariable": "$TY", "regex": "^(XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"}}, {"pattern": "($TY $VAR).$FUNC(<...$ARG...>, ...)"}, {"pattern-not": "($TY $VAR).$FUNC(\"...\", ...)"}]}, {"patterns": [{"pattern-inside": "using System.Xml.Linq;\n...\n"}, {"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(XPathEvaluate|XPathSelectElement|XPathSelectElements)$"}}, {"pattern": "$VAR.$FUNC(<...$ARG...>, ...)"}, {"pattern-not": "$VAR.$FUNC(\"...\", ...)"}]}, {"patterns": [{"pattern-inside": "using System.Xml.Schema;\n...\n"}, {"pattern-either": [{"patterns": [{"pattern": "$VAR.XPath = <...$ARG...>;"}, {"pattern-not": "$VAR.XPath = \"...\""}]}, {"patterns": [{"pattern": "new XmlSchemaXPath { XPath = <...$ARG...> };"}, {"focus-metavariable": "$ARG"}]}]}]}]}]
+    pattern_id: xpath-injection
+    severity: INFO
+
+CWE-78:
+    additional_cwes: CWE-78 Improper neutralization of special elements used in an OS command(OS Command Injection)
+    description: Untrusted input passed to command execution can lead to command injection vulnerabilities
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Diagnostics;\n...\n"}, {"pattern-either": [{"patterns": [{"pattern": "Process.Start($ARG)"}, {"pattern-not": "Process.Start(\"...\")"}]}, {"pattern": "(Process $PROC).StartInfo.FileName = <...$ARG...>;"}, {"pattern": "(Process $PROC).StartInfo.Arguments = <...$ARG...>;"}, {"patterns": [{"pattern-inside": "$PSINFO = new ProcessStartInfo(...)\n...\nProcess.Start($PSINFO)\n"}, {"pattern-either": [{"pattern": "$PSINFO.Arguments = <...$ARG...>;"}, {"pattern": "$PSINFO.FileName = <...$ARG...>;"}]}]}]}]
+    pattern_id: command-injection
+    severity: WARNING
+    additional_cwes: CWE-78 Improper neutralization of special elements used in an OS command(OS Command Injection)
+    description: Untrusted input passed to command execution can lead to command injection vulnerabilities
+
+    languages:
+      - csharp
+    pattern: [{"pattern-inside": "using System.Diagnostics;\n...\n"}, {"pattern-either": [{"patterns": [{"pattern": "Process.Start($ARG)"}, {"pattern-not": "Process.Start(\"...\")"}]}, {"pattern": "(Process $PROC).StartInfo.FileName = <...$ARG...>;"}, {"pattern": "(Process $PROC).StartInfo.Arguments = <...$ARG...>;"}, {"patterns": [{"pattern-inside": "$PSINFO = new ProcessStartInfo(...)\n...\nProcess.Start($PSINFO)\n"}, {"pattern-either": [{"pattern": "$PSINFO.Arguments = <...$ARG...>;"}, {"pattern": "$PSINFO.FileName = <...$ARG...>;"}]}]}]}]
+    pattern_id: command-injection
+    severity: WARNING
+
+CWE-79:
+    additional_cwes: Improper neutralization of input during web page generation(Cross-site Scripting)
+    description: Potential cross site scripting risk detected
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: xss
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation(Cross-site Scripting)
+    description: Potential cross site scripting risk detected
+
+    languages:
+      - csharp
+    pattern: []
+    pattern_id: xss
+    severity: WARNING
+
+CWE-89:
+    additional_cwes: CWE-89 Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)
+    description: Dynamic SQL queries constructed from sanitized input can lead to SQL Injection.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(SqlQuery|ExecuteSqlCommand|ExecuteSqlCommandAsync|ExecuteSqlRaw|ExecuteSqlRawAsync|FromSqlRaw|FromSql|GetSqlStringCommand|ExecuteDataSet|ExecuteReader|ExecuteNonQuery|ExecuteScalar|CreateSQLQuery)$"}}, {"pattern": "$DB.$FUNC($ARG, ...);"}, {"pattern-not": "$DB.$FUNC(\"...\", ...);"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(ExecuteQuery|ExecuteCommand)$"}}, {"pattern-inside": "using System.Data.Linq;\n...\n"}, {"pattern": "(DataContext $CTX).$FUNC($ARG, ...)"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$IMPL", "regex": "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"}}, {"pattern-either": [{"patterns": [{"pattern": "new $IMPL($ARG, ...);"}, {"pattern-not": "new $IMPL(\"...\", ...);"}]}, {"patterns": [{"pattern": "($IMPL $CMD).CommandText = <...$ARG...>;"}, {"pattern-not": "($IMPL $CMD).CommandText = \"...\";"}]}]}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(ExecuteDataRow|ExecuteDataRowAsync|ExecuteDataset|ExecuteDatasetAsync|ExecuteNonQuery|ExecuteNonQueryAsync|ExecuteReader|ExecuteReaderAsync|ExecuteScalar|ExecuteScalarAsync|UpdateDataSet|UpdateDataSetAsync)$"}}, {"pattern-inside": "using MySql.Data.MySqlClient;\n...\n"}, {"pattern": "MySqlHelper.$FUNC(\"...\", $ARG, ...);"}]}, {"patterns": [{"pattern-inside": "using Cassandra;\n...\n"}, {"pattern": "(Session $SESS).Execute($ARG, ...);"}, {"pattern-not": "(Session $SESS).Execute(\"...\", ...);"}]}]}]
+    pattern_id: sql-injection
+    severity: WARNING
+    additional_cwes: CWE-89 Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)
+    description: Dynamic SQL queries constructed from sanitized input can lead to SQL Injection.
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(SqlQuery|ExecuteSqlCommand|ExecuteSqlCommandAsync|ExecuteSqlRaw|ExecuteSqlRawAsync|FromSqlRaw|FromSql|GetSqlStringCommand|ExecuteDataSet|ExecuteReader|ExecuteNonQuery|ExecuteScalar|CreateSQLQuery)$"}}, {"pattern": "$DB.$FUNC($ARG, ...);"}, {"pattern-not": "$DB.$FUNC(\"...\", ...);"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(ExecuteQuery|ExecuteCommand)$"}}, {"pattern-inside": "using System.Data.Linq;\n...\n"}, {"pattern": "(DataContext $CTX).$FUNC($ARG, ...)"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$IMPL", "regex": "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"}}, {"pattern-either": [{"patterns": [{"pattern": "new $IMPL($ARG, ...);"}, {"pattern-not": "new $IMPL(\"...\", ...);"}]}, {"patterns": [{"pattern": "($IMPL $CMD).CommandText = <...$ARG...>;"}, {"pattern-not": "($IMPL $CMD).CommandText = \"...\";"}]}]}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$FUNC", "regex": "^(ExecuteDataRow|ExecuteDataRowAsync|ExecuteDataset|ExecuteDatasetAsync|ExecuteNonQuery|ExecuteNonQueryAsync|ExecuteReader|ExecuteReaderAsync|ExecuteScalar|ExecuteScalarAsync|UpdateDataSet|UpdateDataSetAsync)$"}}, {"pattern-inside": "using MySql.Data.MySqlClient;\n...\n"}, {"pattern": "MySqlHelper.$FUNC(\"...\", $ARG, ...);"}]}, {"patterns": [{"pattern-inside": "using Cassandra;\n...\n"}, {"pattern": "(Session $SESS).Execute($ARG, ...);"}, {"pattern-not": "(Session $SESS).Execute(\"...\", ...);"}]}]}]
+    pattern_id: sql-injection
+    severity: WARNING
+
+CWE-90:
+    additional_cwes: Improper neutralization of special elements used in an LDAP query (LDAP Injection)
+    description: Unsanitized dynamic value passed to LDAP query can lead to LDAP Injections
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"pattern": "(DirectorySearcher $SOURCE).Filter = ..."}, {"pattern-not": "(DirectorySearcher $SOURCE).Filter = \"...\""}]}, {"patterns": [{"pattern": "(DirectorySearcher $SOURCE).Path = ..."}, {"pattern-not": "(DirectorySearcher $SOURCE).Path = \"...\""}]}]}]
+    pattern_id: ldap-injection
+    severity: WARNING
+    additional_cwes: Improper neutralization of special elements used in an LDAP query (LDAP Injection)
+    description: Unsanitized dynamic value passed to LDAP query can lead to LDAP Injections
+
+    languages:
+      - csharp
+    pattern: [{"pattern-either": [{"patterns": [{"pattern": "(DirectorySearcher $SOURCE).Filter = ..."}, {"pattern-not": "(DirectorySearcher $SOURCE).Filter = \"...\""}]}, {"patterns": [{"pattern": "(DirectorySearcher $SOURCE).Path = ..."}, {"pattern-not": "(DirectorySearcher $SOURCE).Path = \"...\""}]}]}]
+    pattern_id: ldap-injection
+    severity: WARNING
+
+
+Language: java
+CWE-200:
+    description: Content loaded in the WebView is allowed to access the filesystem
+    pattern: \.(setAllowFileAccess|setAllowFileAccessFromURLs|setAllowUniversalAccessFromURLs)\(true\)
+    pattern_id: webview-filesystem-access
+    severity: Warning
+
+CWE-276:
+    description: The application creates world readable or world writable files
+    pattern: Context\.MODE_WORLD_(READABLE|WRITABLE)
+    pattern_id: world-readable-writable-files
+    severity: Warning
+
+CWE-295:
+    description: Unsafe hostname verification
+    pattern: (ALLOW_ALL_HOSTNAME_VERIFIER|new AllowAllHostnameVerifier|new NullHostnameVerifier|NoopHostnameVerifier)
+    pattern_id: unsafe-hostname-verification
+    severity: Warning
+
+CWE-306:
+    additional_cwes: Missing authentication for critical function (LDAP)
+    description: The application does not provide authentication when communicating an LDAP
+server. It is strongly recommended that the LDAP server be configured with
+authentication and restrict what queries users can execute.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "import javax.naming.Context;\n...\n"}, {"pattern": "$ENV.put(Context.SECURITY_AUTHENTICATION, \"none\");"}]
+    pattern_id: ldap-insecure_config_auth
+    severity: WARNING
+    additional_cwes: Missing authentication for critical function (LDAP)
+    description: The application does not provide authentication when communicating an LDAP
+server. It is strongly recommended that the LDAP server be configured with
+authentication and restrict what queries users can execute.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "import javax.naming.Context;\n...\n"}, {"pattern": "$ENV.put(Context.SECURITY_AUTHENTICATION, \"none\");"}]
+    pattern_id: ldap-insecure_config_auth
+    severity: WARNING
+
+CWE-327:
+    description: Deprecated cryptographic algorithms being used (ECB)
+    pattern: Cipher\.getInstance\(".*ECB.*"
+    pattern_id: deprecated-ecb-usage
+    severity: Warning
+    description: Deprecated cryptographic algorithms being used (ECB)
+    pattern: \.setBlockModes\(.*BLOCK_MODE_ECB
+    pattern_id: deprecated-ecb-blockmode-usage
+    severity: Warning
+    description: Deprecated cryptographic algorithms being used (ECB)
+    pattern: Cipher\.getInstance\("AES"\)
+    pattern_id: deprecated-aes-usage
+    severity: Warning
+    description: Deprecated cryptographic algorithms being used (CBC) with PKCS5 / PKCS7 padding, might be vulnerable to Padding Oracle attacks
+    pattern: Cipher\.getInstance\(.*\/CBC\/(PKCS5|PKCS7)Padding"
+    pattern_id: deprecated-cbc-padding-usage
+    severity: Warning
+    description: Deprecated cryptographic algorithms being used (3DES/DES/DESede/Blowfish/DESedeWrap)
+    pattern: \.getInstance\("(3DES|DESede|DES|Blowfish|DESedeWrap)
+    pattern_id: deprecated-crypto-algorithms-usage
+    severity: Warning
+    description: The application uses "NullCipher"
+    pattern: (new NullCipher\(|new javax\.crypto\.NullCipher\()
+    pattern_id: nullcipher-usage
+    severity: Warning
+    description: Use of RSA without OAEP padding.
+    pattern: Cipher\.getInstance\(.*NoPadding"
+    pattern_id: rsa-without-oaep-padding
+    severity: Warning
+    description: Use of weak hashing algorithm
+    pattern: \.getSha1Digest\(\)|\.sha1\(|\.sha1Hex\(|\.getInstance\("(SHA1|SHA-1)"
+    pattern_id: weak-sha1-hashing
+    severity: Warning
+    description: Use of weak hashing algorithm
+    pattern: \.getMd2Digest\(\)|\.md2\(|\.md2Hex\(|\.getInstance\("(MD2|md2)"
+    pattern_id: weak-md2-hashing
+    severity: Warning
+    description: Use of weak hashing algorithm
+    pattern: \.getMd4Digest\(\)|\.md4\(|\.md4Hex\(|\.getInstance\("(MD4|md4)"
+    pattern_id: weak-md4-hashing
+    severity: Warning
+    description: Use of weak hashing algorithm
+    pattern: \.getMd5Digest\(\)|\.md5\(|\.md5Hex\(|\.getInstance\("(MD5|md5)"
+    pattern_id: weak-md5-hashing
+    severity: Warning
+    description: Deprecated cryptographic algorithms being used (RC2/RC4)
+    pattern: \.getInstance\("(RC2|rc2|RC4|rc4|ARCFOUR)
+    pattern_id: deprecated-rc2-rc4-usage
+    severity: Warning
+    description: Weak networking protocol (SSLv3)
+    pattern: \.getInstance\("SSLv3
+    pattern_id: weak-ssl3-protocol
+    severity: Warning
+
+CWE-330:
+    additional_cwes: Use of insufficiently random values
+    description: Depending on the context, generating weak random numbers may expose cryptographic functions
+which rely on these numbers, to be exploitable. When generating numbers for sensitive values
+such as tokens, nonces, and cryptographic keys, it is recommended that the `DRBG` instance
+of `SecureRandom` be used.
+
+    languages:
+      - java
+    pattern: [{"pattern-either": [{"pattern": "java.util.Random $R = new java.util.Random();\n...\n$R.$METHOD();\n"}, {"pattern": "(java.util.Random $R).$METHOD()"}, {"pattern": "new java.util.Random().$METHOD()"}, {"pattern": "org.apache.commons.lang.math.RandomUtils.$METHOD()"}, {"pattern": "org.apache.commons.lang.RandomStringUtils.$METHOD(...)"}]}, {"metavariable-regex": {"metavariable": "$METHOD", "regex": "^(next|random)"}}]
+    pattern_id: random_number_generator_methods
+    severity: WARNING
+
+CWE-352:
+    additional_cwes: Cross-Site Request Forgery (CSRF)
+    description: The application fails to protect against Cross-Site Request Forgery (CSRF)
+due to disabling Spring's CSRF protection features.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: csrf-spring-config-disabled
+    severity: WARNING
+    additional_cwes: Cross-Site Request Forgery (CSRF)
+    description: The application fails to protect against Cross-Site Request Forgery (CSRF)
+due to disabling Spring's CSRF protection features.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: csrf-spring-config-disabled
+    severity: WARNING
+
+CWE-489:
+    description: Webview debugging enabled
+    pattern: \.setWebContentsDebuggingEnabled\(true\);
+    pattern_id: webview-debugging-enabled
+    severity: Warning
+
+CWE-502:
+    additional_cwes: Deserialization of Untrusted Data
+    description: Insecure deserialization detected. Ensure proper validation and handling of serialized data.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: deserialization_insecure_untrusted_data
+    severity: WARNING
+    additional_cwes: Deserialization of Untrusted Data
+    description: Insecure deserialization detected. Ensure proper validation and handling of serialized data.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: deserialization_insecure_untrusted_data
+    severity: WARNING
+
+CWE-589:
+    description: Use of deprecated or obsolete methods
+    pattern: Character\.(isJavaLetter|isJavaLetterOrDigit|isSpace)\(
+    pattern_id: deprecated-character-methods
+    severity: Advice
+    description: Use of deprecated or obsolete methods
+    pattern: Thread\.(run|stop)\(
+    pattern_id: deprecated-thread-methods
+    severity: Advice
+
+CWE-611:
+    description: XML external entities enabled
+    pattern: \.setProperty\("javax\.xml\.stream\.isSupportingExternalEntities",[\s]?true\)
+    pattern_id: xml-external-entities-enabled
+    severity: Warning
+    description: XML external entities enabled (DOCTYPE not disabled)
+    pattern: \.setFeature\("http?://[^\s]+disallow-doctype-decl",[\s]?false\)
+    pattern_id: doctype-not-disabled
+    severity: Warning
+    description: XML external entities enabled
+    pattern: \.setFeature\("http?://[^\s]+(external-parameter-entities|external-general-entities)",[\s]?true\)
+    pattern_id: xml-external-entities-feature-enabled
+    severity: Warning
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+The XMLReaderFactory has been deprecated.
+It is recommended that the `SAXParser` is configured to disable DTD doctypes as this protects
+against the majority of XXE attacks.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$SF = SAXParserFactory.newInstance();\n...\n"}, {"pattern-not-inside": "$SF.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"}, {"pattern-not-inside": "$SF.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true);\n...\n"}, {"pattern-inside": "$P = $SFP.newSAXParser();\n...\n"}, {"pattern": "$P.parse(...);"}]
+    pattern_id: xxe-insecure-sax-parser
+    severity: ERROR
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+In most XML parsers, the recommendation to protect against XXE is to disable the doctype feature.
+Unfortunately use of the `XMLInputFactory` requires that the doctypes feature be enabled. Instead
+the application can set the `ACCESS_EXTERNAL_DTD` to disable supporting external entities.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$SF = XMLInputFactory.newFactory();\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, false);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n...\n"}, {"pattern": "$SF.createXMLStreamReader(...)"}]
+    pattern_id: xxe-insecure-xml-input-factory
+    severity: ERROR
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+The XMLReaderFactory has been deprecated. It is recommended that
+[SAXParserFactory](https://docs.oracle.com/javase/9/docs/api/javax/xml/parsers/SAXParserFactory.html)
+be used instead. Additionally when using the SAXParser it must be configured to disallow doctypes,
+which will protect against the majority of XXE attacks.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$R = XMLReaderFactory.createXMLReader();\n...\n"}, {"pattern-not-inside": "$R.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"}, {"pattern": "$R.parse(...);"}]
+    pattern_id: xxe-deprecated-xml-reader
+    severity: ERROR
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+The XMLReaderFactory has been deprecated.
+It is recommended that the `SAXParser` is configured to disable DTD doctypes as this protects
+against the majority of XXE attacks.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$SF = SAXParserFactory.newInstance();\n...\n"}, {"pattern-not-inside": "$SF.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"}, {"pattern-not-inside": "$SF.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true);\n...\n"}, {"pattern-inside": "$P = $SFP.newSAXParser();\n...\n"}, {"pattern": "$P.parse(...);"}]
+    pattern_id: xxe-insecure-sax-parser
+    severity: ERROR
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+In most XML parsers, the recommendation to protect against XXE is to disable the doctype feature.
+Unfortunately use of the `XMLInputFactory` requires that the doctypes feature be enabled. Instead
+the application can set the `ACCESS_EXTERNAL_DTD` to disable supporting external entities.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$SF = XMLInputFactory.newFactory();\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, false);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);\n...\n"}, {"pattern-not-inside": "$SF.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n...\n"}, {"pattern": "$SF.createXMLStreamReader(...)"}]
+    pattern_id: xxe-insecure-xml-input-factory
+    severity: ERROR
+    additional_cwes: Improper restriction of XML external entity reference ('XXE')
+    description: External XML entities are a feature of XML parsers that allow documents to contain references
+to other documents or data. This feature can be abused to read files, communicate with external
+hosts, exfiltrate data, or cause a Denial of Service (DoS).
+The XMLReaderFactory has been deprecated. It is recommended that
+[SAXParserFactory](https://docs.oracle.com/javase/9/docs/api/javax/xml/parsers/SAXParserFactory.html)
+be used instead. Additionally when using the SAXParser it must be configured to disallow doctypes,
+which will protect against the majority of XXE attacks.
+
+    languages:
+      - java
+    pattern: [{"pattern-inside": "$R = XMLReaderFactory.createXMLReader();\n...\n"}, {"pattern-not-inside": "$R.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);\n...\n"}, {"pattern": "$R.parse(...);"}]
+    pattern_id: xxe-deprecated-xml-reader
+    severity: ERROR
+
+CWE-643:
+    additional_cwes: Improper neutralization of data within XPath expressions ('XPath Injection')
+    description: The application processes `XPath` queries with potentially malicious input.
+An adversary who is able to control the XPath query could potentially influence the logic
+of how data is retrieved, processed or even bypass protections.
+To protect against XPath injection, user input should be parameterized using a variable resolver.
+
+    languages:
+      - java
+    pattern: [{"pattern-either": [{"pattern-inside": "import javax.xml.xpath.*; ..."}, {"pattern-inside": "import javax.xml.xpath.XPath; ..."}]}, {"pattern-either": [{"patterns": [{"pattern": "(XPath $X).compile($ARG)"}, {"pattern-not": "(XPath $X).compile(\"...\")"}]}, {"patterns": [{"pattern": "(XPath $X).evaluate($ARG)"}, {"pattern-not": "(XPath $X).evaluate(\"...\")"}]}]}]
+    pattern_id: xpath_injection_variable_resolver
+    severity: ERROR
+    additional_cwes: Improper neutralization of data within XPath expressions ('XPath Injection')
+    description: The application processes `XPath` queries with potentially malicious input.
+An adversary who is able to control the XPath query could potentially influence the logic
+of how data is retrieved, processed or even bypass protections.
+To protect against XPath injection, user input should be parameterized using a variable resolver.
+
+    languages:
+      - java
+    pattern: [{"pattern-either": [{"pattern-inside": "import javax.xml.xpath.*; ..."}, {"pattern-inside": "import javax.xml.xpath.XPath; ..."}]}, {"pattern-either": [{"patterns": [{"pattern": "(XPath $X).compile($ARG)"}, {"pattern-not": "(XPath $X).compile(\"...\")"}]}, {"patterns": [{"pattern": "(XPath $X).evaluate($ARG)"}, {"pattern-not": "(XPath $X).evaluate(\"...\")"}]}]}]
+    pattern_id: xpath_injection_variable_resolver
+    severity: ERROR
+
+CWE-78:
+    description: Potential command injection if unsanitized input is sent to Runtime.exec() method
+    pattern: Runtime\.getRuntime\(\)(.*)?\.exec\s*\(
+    pattern_id: potential-command-injection
+    severity: Warning
+
+CWE-79:
+    additional_cwes: Improper neutralization of input during web page generation('XSS')
+    description: The application is returning user-supplied data from an HTTP request to an HTTP response's
+`sendError` method. This could lead to Cross Site Scripting (XSS) if the input were malicious
+script code and the application server is not properly validating the output.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: xss-insecure-send-error-response
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation('XSS')
+    description: The application is returning user-supplied data from an HTTP request directly into an HTTP
+response output writer. This could lead to Cross Site Scripting (XSS) if the input were malicious
+script code and the application server is not properly validating the output.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: xss-insecure-servlet-response
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation('XSS')
+    description: The application is returning user-supplied data from an HTTP request to an HTTP response's
+`sendError` method. This could lead to Cross Site Scripting (XSS) if the input were malicious
+script code and the application server is not properly validating the output.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: xss-insecure-send-error-response
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation('XSS')
+    description: The application is returning user-supplied data from an HTTP request directly into an HTTP
+response output writer. This could lead to Cross Site Scripting (XSS) if the input were malicious
+script code and the application server is not properly validating the output.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: xss-insecure-servlet-response
+    severity: WARNING
+
+CWE-918:
+    additional_cwes: Server-Side Request Forgery (SSRF)
+    description: Server-Side-Request-Forgery (SSRF) exploits backend systems that initiate requests to third
+parties. If user input is used in constructing or sending these requests, an attacker could supply
+malicious data to force the request to other systems or modify request data to cause unwanted actions.
+Ensure user input is not used directly in constructing URLs or URIs when initiating requests
+to third party systems from back end systems.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: ssrf_insecure_patterns
+    severity: ERROR
+    additional_cwes: Server-Side Request Forgery (SSRF)
+    description: Server-Side-Request-Forgery (SSRF) exploits backend systems that initiate requests to third
+parties. If user input is used in constructing or sending these requests, an attacker could supply
+malicious data to force the request to other systems or modify request data to cause unwanted actions.
+Ensure user input is not used directly in constructing URLs or URIs when initiating requests
+to third party systems from back end systems.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: ssrf_insecure_patterns
+    severity: ERROR
+
+CWE-942:
+    additional_cwes: Permissive cross-domain policy with untrusted domains
+    description: This application potentially allows user-supplied input into the value of the
+`Access-Control-Allow-Origin` response header. This header is part of the CORS
+specification. By allowing user input to specify which domains can communicate with this
+server, an adversary could exploit a weakness in this server to force clients to send credentials (such
+as session identifiers) to the adversary's server.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: cors-servlet-header-injection
+    severity: ERROR
+    additional_cwes: Permissive cross-domain policy with untrusted domains
+    description: This application potentially allows user-supplied input into the value of the
+`Access-Control-Allow-Origin` response header. This header is part of the CORS
+specification. By allowing user input to specify which domains can communicate with this
+server, an adversary could exploit a weakness in this server to force clients to send credentials (such
+as session identifiers) to the adversary's server.
+
+    languages:
+      - java
+    pattern: []
+    pattern_id: cors-servlet-header-injection
+    severity: ERROR
+
+
+Language: javascript
+CWE-119:
+    additional_cwes: Improper restriction of operations within the bounds of a memory buffer
+    description: The application was found using `noAssert` when calling the Buffer API. The `noAssert`
+argument has
+been deprecated since Node 10. Calling the Buffer API with this argument allows the offset
+specified to
+be beyond the end of the buffer. This could result in writing or reading beyond the end of the
+buffer and
+cause a segmentation fault, leading to the application crashing.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: buffer-noassert
+    severity: WARNING
+    additional_cwes: Improper restriction of operations within the bounds of a memory buffer
+    description: The application was found using `noAssert` when calling the Buffer API. The `noAssert`
+argument has
+been deprecated since Node 10. Calling the Buffer API with this argument allows the offset
+specified to
+be beyond the end of the buffer. This could result in writing or reading beyond the end of the
+buffer and
+cause a segmentation fault, leading to the application crashing.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: buffer-noassert
+    severity: WARNING
+
+CWE-185:
+    additional_cwes: Regular expression with non-literal value
+    description: The `RegExp` constructor was called with a non-literal value. If an adversary were able to
+supply a malicious regex, they could cause a Regular Expression Denial of Service (ReDoS)
+against the application. In Node applications, this could cause the entire application to no
+longer
+be responsive to other users' requests.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: dos-non-literal-regexp
+    severity: WARNING
+    additional_cwes: Regular expression with non-literal value
+    description: The `RegExp` constructor was called with a non-literal value. If an adversary were able to
+supply a malicious regex, they could cause a Regular Expression Denial of Service (ReDoS)
+against the application. In Node applications, this could cause the entire application to no
+longer
+be responsive to other users' requests.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: dos-non-literal-regexp
+    severity: WARNING
+
+CWE-208:
+    additional_cwes: Observable timing discrepancy
+    description: The application was found executing string comparisons using one of `===`, `!==`, `==` or `!=`
+against security sensitive values. String comparisons like this are not constant time, meaning
+the
+first character found not to match in the two strings will immediately exit the conditional
+statement.
+This allows an adversary to calculate or observe small timing differences depending on the
+strings
+passed to this comparison. This potentially allows an adversary the ability to brute force a
+string
+that will match the expected value by monitoring different character values.
+
+    languages:
+      - javascript
+    pattern: [{"pattern-not": "if ($Z == null) { ... };"}, {"pattern-not": "if ($Z === null) { ... };"}, {"pattern-not": "if ($Z != null) { ... };"}, {"pattern-not": "if ($Z !== null) { ... };"}, {"pattern-not": "if ($Q != undefined) { ... };"}, {"pattern-not": "if ($Q !== undefined) { ... };"}, {"pattern-not": "if ($Q == undefined) { ... };"}, {"pattern-not": "if ($Q === undefined) { ... };"}, {"pattern-not": "return $Y == null;"}, {"pattern-not": "return $Y === null;"}, {"pattern-not": "return $Y != null;"}, {"pattern-not": "return $Y !== null;"}, {"pattern-not": "return $Y == undefined;"}, {"pattern-not": "return $Y === undefined;"}, {"pattern-not": "return $Y != undefined;"}, {"pattern-not": "return $Y !== undefined;"}, {"pattern-either": [{"pattern": "if (password == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == password) {\n    ...\n}\n"}, {"pattern": "if (password === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === password) {\n    ...\n}\n"}, {"pattern": "if (pass == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == pass) {\n    ...\n}\n"}, {"pattern": "if (pass === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === pass) {\n    ...\n}\n"}, {"pattern": "if (secret == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == secret) {\n    ...\n}\n"}, {"pattern": "if (secret === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === secret) {\n    ...\n}\n"}, {"pattern": "if (api == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == api) {\n    ...\n}\n"}, {"pattern": "if (api === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === api) {\n    ...\n}\n"}, {"pattern": "if (apiKey == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == apiKey) {\n    ...\n}\n"}, {"pattern": "if (apiKey === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === apiKey) {\n    ...\n}\n"}, {"pattern": "if (apiSecret == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == apiSecret) {\n    ...\n}\n"}, {"pattern": "if (apiSecret === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === apiSecret) {\n    ...\n}\n"}, {"pattern": "if (token == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == token) {\n    ...\n}\n"}, {"pattern": "if (token === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === token) {\n    ...\n}\n"}, {"pattern": "if (hash == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == hash) {\n    ...\n}\n"}, {"pattern": "if (hash === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === hash) {\n    ...\n}\n"}, {"pattern": "if (auth_token == $X) {\n    ...\n}\n"}, {"pattern": "if ($X == auth_token) {\n    ...\n}\n"}, {"pattern": "if (auth_token === $X) {\n    ...\n}\n"}, {"pattern": "if ($X === auth_token) {\n    ...\n}\n"}, {"pattern": "if (password != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != password) {\n    ...\n}\n"}, {"pattern": "if (password !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== password) {\n    ...\n}\n"}, {"pattern": "if (pass != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != pass) {\n    ...\n}\n"}, {"pattern": "if (pass !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== pass) {\n    ...\n}\n"}, {"pattern": "if (secret != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != secret) {\n    ...\n}\n"}, {"pattern": "if (secret !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== secret) {\n    ...\n}\n"}, {"pattern": "if (api != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != api) {\n    ...\n}\n"}, {"pattern": "if (api !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== api) {\n    ...\n}\n"}, {"pattern": "if (apiKey != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != apiKey) {\n    ...\n}\n"}, {"pattern": "if (apiKey !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== apiKey) {\n    ...\n}\n"}, {"pattern": "if (apiSecret != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != apiSecret) {\n    ...\n}\n"}, {"pattern": "if (apiSecret !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== apiSecret) {\n    ...\n}\n"}, {"pattern": "if (token != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != token) {\n    ...\n}\n"}, {"pattern": "if (token !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== token) {\n    ...\n}\n"}, {"pattern": "if (hash != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != hash) {\n    ...\n}\n"}, {"pattern": "if (hash !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== hash) {\n    ...\n}\n"}, {"pattern": "if (auth_token != $X) {\n    ...\n}\n"}, {"pattern": "if ($X != auth_token) {\n    ...\n}\n"}, {"pattern": "if (auth_token !== $X) {\n    ...\n}\n"}, {"pattern": "if ($X !== auth_token) {\n    ...\n}\n"}, {"pattern": "return $X === auth_token;\n"}, {"pattern": "return auth_token === $X;\n"}, {"pattern": "return $X === token;\n"}, {"pattern": "return token === $X;\n"}, {"pattern": "return $X === hash;\n"}, {"pattern": "return hash === $X;\n"}, {"pattern": "return $X === password;\n"}, {"pattern": "return password === $X;\n"}, {"pattern": "return $X === pass;\n"}, {"pattern": "return pass === $X;\n"}, {"pattern": "return $X === apiKey;\n"}, {"pattern": "return apiKey === $X;\n"}, {"pattern": "return $X === apiSecret;\n"}, {"pattern": "return apiSecret === $X;\n"}, {"pattern": "return $X === api_key;\n"}, {"pattern": "return api_key === $X;\n"}, {"pattern": "return $X === api_secret;\n"}, {"pattern": "return api_secret === $X;\n"}, {"pattern": "return $X === secret;\n"}, {"pattern": "return secret === $X;\n"}, {"pattern": "return $X === api;\n"}, {"pattern": "return api === $X;\n"}, {"pattern": "return $X == auth_token;\n"}, {"pattern": "return auth_token == $X;\n"}, {"pattern": "return $X == token;\n"}, {"pattern": "return token == $X;\n"}, {"pattern": "return $X == hash;\n"}, {"pattern": "return hash == $X;\n"}, {"pattern": "return $X == password;\n"}, {"pattern": "return password == $X;\n"}, {"pattern": "return $X == pass;\n"}, {"pattern": "return pass == $X;\n"}, {"pattern": "return $X == apiKey;\n"}, {"pattern": "return apiKey == $X;\n"}, {"pattern": "return $X == apiSecret;\n"}, {"pattern": "return apiSecret == $X;\n"}, {"pattern": "return $X == api_key;\n"}, {"pattern": "return api_key == $X;\n"}, {"pattern": "return $X == api_secret;\n"}, {"pattern": "return api_secret == $X;\n"}, {"pattern": "return $X == secret;\n"}, {"pattern": "return secret == $X;\n"}, {"pattern": "return $X == api;\n"}, {"pattern": "return api == $X;\n"}, {"pattern": "return $X !== auth_token;\n"}, {"pattern": "return auth_token !== $X;\n"}, {"pattern": "return $X !== token;\n"}, {"pattern": "return token !== $X;\n"}, {"pattern": "return $X !== hash;\n"}, {"pattern": "return hash !== $X;\n"}, {"pattern": "return $X !== password;\n"}, {"pattern": "return password !== $X;\n"}, {"pattern": "return $X !== pass;\n"}, {"pattern": "return pass !== $X;\n"}, {"pattern": "return $X !== apiKey;\n"}, {"pattern": "return apiKey !== $X;\n"}, {"pattern": "return $X !== apiSecret;\n"}, {"pattern": "return apiSecret !== $X;\n"}, {"pattern": "return $X !== api_key;\n"}, {"pattern": "return api_key !== $X;\n"}, {"pattern": "return $X !== api_secret;\n"}, {"pattern": "return api_secret !== $X;\n"}, {"pattern": "return $X !== secret;\n"}, {"pattern": "return secret !== $X;\n"}, {"pattern": "return $X !== api;\n"}, {"pattern": "return api !== $X;\n"}, {"pattern": "return $X != auth_token;\n"}, {"pattern": "return auth_token != $X;\n"}, {"pattern": "return $X != token;\n"}, {"pattern": "return token != $X;\n"}, {"pattern": "return $X != hash;\n"}, {"pattern": "return hash != $X;\n"}, {"pattern": "return $X != password;\n"}, {"pattern": "return password != $X;\n"}, {"pattern": "return $X != pass;\n"}, {"pattern": "return pass != $X;\n"}, {"pattern": "return $X != apiKey;\n"}, {"pattern": "return apiKey != $X;\n"}, {"pattern": "return $X != apiSecret;\n"}, {"pattern": "return apiSecret != $X;\n"}, {"pattern": "return $X != api_key;\n"}, {"pattern": "return api_key != $X;\n"}, {"pattern": "return $X != api_secret;\n"}, {"pattern": "return api_secret != $X;\n"}, {"pattern": "return $X != secret;\n"}, {"pattern": "return secret != $X;\n"}, {"pattern": "return $X != api;\n"}, {"pattern": "return api != $X;\n"}]}]
+    pattern_id: possible-timing-attacks
+    severity: WARNING
+
+CWE-22:
+    additional_cwes: Improper limitation of a pathname to a restricted directory (Path Traversal)
+    description: The application dynamically constructs file or path information. If the path
+information comes from user-supplied input, it could be abused to read sensitive files,
+access other users' data, or aid in exploitation to gain further system access.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "import $MOD from $IMP\n...\n"}, {"pattern-inside": "$MOD = require($IMP)\n...\n"}]}, {"metavariable-comparison": {"comparison": "$IMP in ['fs', 'node:fs', 'fs/promises', 'node:fs/promises', 'fs-extra']", "metavariable": "$IMP"}}, {"pattern-not": "$MOD.appendFile(\"...\", ...)"}, {"pattern-not": "$MOD.appendFileSync(\"...\", ...)"}, {"pattern-not": "$MOD.chmod(\"...\", ...)"}, {"pattern-not": "$MOD.chmodSync(\"...\", ...)"}, {"pattern-not": "$MOD.chown(\"...\", ...)"}, {"pattern-not": "$MOD.chownSync(\"...\", ...)"}, {"pattern-not": "$MOD.createReadStream(\"...\", ...)"}, {"pattern-not": "$MOD.createWriteStream(\"...\", ...)"}, {"pattern-not": "$MOD.exists(\"...\", ...)"}, {"pattern-not": "$MOD.existsSync(\"...\", ...)"}, {"pattern-not": "$MOD.lchmod(\"...\", ...)"}, {"pattern-not": "$MOD.lchmodSync(\"...\", ...)"}, {"pattern-not": "$MOD.lchown(\"...\", ...)"}, {"pattern-not": "$MOD.lchownSync(\"...\", ...)"}, {"pattern-not": "$MOD.link(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.linkSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.lstat(\"...\", ...)"}, {"pattern-not": "$MOD.lstatSync(\"...\", ...)"}, {"pattern-not": "$MOD.mkdir(\"...\", ...)"}, {"pattern-not": "$MOD.mkdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.open(\"...\", ...)"}, {"pattern-not": "$MOD.openSync(\"...\", ...)"}, {"pattern-not": "$MOD.readdir(\"...\", ...)"}, {"pattern-not": "$MOD.readdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.readFile(\"...\", ...)"}, {"pattern-not": "$MOD.readFileSync(\"...\", ...)"}, {"pattern-not": "$MOD.readlink(\"...\", ...)"}, {"pattern-not": "$MOD.readlinkSync(\"...\", ...)"}, {"pattern-not": "$MOD.realpath(\"...\", ...)"}, {"pattern-not": "$MOD.realpathSync(\"...\", ...)"}, {"pattern-not": "$MOD.rename(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.renameSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.rmdir(\"...\", ...)"}, {"pattern-not": "$MOD.rmdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.stat(\"...\", ...)"}, {"pattern-not": "$MOD.statSync(\"...\", ...)"}, {"pattern-not": "$MOD.symlink(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.symlinkSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.truncate(\"...\", ...)"}, {"pattern-not": "$MOD.truncateSync(\"...\", ...)"}, {"pattern-not": "$MOD.unlink(\"...\", ...)"}, {"pattern-not": "$MOD.unlinkSync(\"...\", ...)"}, {"pattern-not": "$MOD.unwatchFile(\"...\", ...)"}, {"pattern-not": "$MOD.utimes(\"...\", ...)"}, {"pattern-not": "$MOD.utimesSync(\"...\", ...)"}, {"pattern-not": "$MOD.watch(\"...\", ...)"}, {"pattern-not": "$MOD.watchFile(\"...\", ...)"}, {"pattern-not": "$MOD.writeFile(\"...\", ...)"}, {"pattern-not": "$MOD.writeFileSync(\"...\", ...)"}, {"pattern-either": [{"pattern": "$MOD.appendFile(...)"}, {"pattern": "$MOD.appendFileSync(...)"}, {"pattern": "$MOD.chmod(...)"}, {"pattern": "$MOD.chmodSync(...)"}, {"pattern": "$MOD.chown(...)"}, {"pattern": "$MOD.chownSync(...)"}, {"pattern": "$MOD.createReadStream(...)"}, {"pattern": "$MOD.createWriteStream(...)"}, {"pattern": "$MOD.exists(...)"}, {"pattern": "$MOD.existsSync(...)"}, {"pattern": "$MOD.lchmod(...)"}, {"pattern": "$MOD.lchmodSync(...)"}, {"pattern": "$MOD.lchown(...)"}, {"pattern": "$MOD.lchownSync(...)"}, {"pattern": "$MOD.link(...)"}, {"pattern": "$MOD.linkSync(...)"}, {"pattern": "$MOD.lstat(...)"}, {"pattern": "$MOD.lstatSync(...)"}, {"pattern": "$MOD.mkdir(...)"}, {"pattern": "$MOD.mkdirSync(...)"}, {"pattern": "$MOD.open(...)"}, {"pattern": "$MOD.openSync(...)"}, {"pattern": "$MOD.readdir(...)"}, {"pattern": "$MOD.readdirSync(...)"}, {"pattern": "$MOD.readFile(...)"}, {"pattern": "$MOD.readFileSync(...)"}, {"pattern": "$MOD.readlink(...)"}, {"pattern": "$MOD.readlinkSync(...)"}, {"pattern": "$MOD.realpath(...)"}, {"pattern": "$MOD.realpathSync(...)"}, {"pattern": "$MOD.rename(...)"}, {"pattern": "$MOD.renameSync(...)"}, {"pattern": "$MOD.rmdir(...)"}, {"pattern": "$MOD.rmdirSync(...)"}, {"pattern": "$MOD.stat(...)"}, {"pattern": "$MOD.statSync(...)"}, {"pattern": "$MOD.symlink(...)"}, {"pattern": "$MOD.symlinkSync(...)"}, {"pattern": "$MOD.truncate(...)"}, {"pattern": "$MOD.truncateSync(...)"}, {"pattern": "$MOD.unlink(...)"}, {"pattern": "$MOD.unlinkSync(...)"}, {"pattern": "$MOD.unwatchFile(...)"}, {"pattern": "$MOD.utimes(...)"}, {"pattern": "$MOD.utimesSync(...)"}, {"pattern": "$MOD.watch(...)"}, {"pattern": "$MOD.watchFile(...)"}, {"pattern": "$MOD.writeFile(...)"}, {"pattern": "$MOD.writeFileSync(...)"}]}]
+    pattern_id: pathtraversal-non-literal-fs-filename
+    severity: WARNING
+    additional_cwes: Improper limitation of a pathname to a restricted directory (Path Traversal)
+    description: The application dynamically constructs file or path information. If the path
+information comes from user-supplied input, it could be abused to read sensitive files,
+access other users' data, or aid in exploitation to gain further system access.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "import $MOD from $IMP\n...\n"}, {"pattern-inside": "$MOD = require($IMP)\n...\n"}]}, {"metavariable-comparison": {"comparison": "$IMP in ['fs', 'node:fs', 'fs/promises', 'node:fs/promises', 'fs-extra']", "metavariable": "$IMP"}}, {"pattern-not": "$MOD.appendFile(\"...\", ...)"}, {"pattern-not": "$MOD.appendFileSync(\"...\", ...)"}, {"pattern-not": "$MOD.chmod(\"...\", ...)"}, {"pattern-not": "$MOD.chmodSync(\"...\", ...)"}, {"pattern-not": "$MOD.chown(\"...\", ...)"}, {"pattern-not": "$MOD.chownSync(\"...\", ...)"}, {"pattern-not": "$MOD.createReadStream(\"...\", ...)"}, {"pattern-not": "$MOD.createWriteStream(\"...\", ...)"}, {"pattern-not": "$MOD.exists(\"...\", ...)"}, {"pattern-not": "$MOD.existsSync(\"...\", ...)"}, {"pattern-not": "$MOD.lchmod(\"...\", ...)"}, {"pattern-not": "$MOD.lchmodSync(\"...\", ...)"}, {"pattern-not": "$MOD.lchown(\"...\", ...)"}, {"pattern-not": "$MOD.lchownSync(\"...\", ...)"}, {"pattern-not": "$MOD.link(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.linkSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.lstat(\"...\", ...)"}, {"pattern-not": "$MOD.lstatSync(\"...\", ...)"}, {"pattern-not": "$MOD.mkdir(\"...\", ...)"}, {"pattern-not": "$MOD.mkdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.open(\"...\", ...)"}, {"pattern-not": "$MOD.openSync(\"...\", ...)"}, {"pattern-not": "$MOD.readdir(\"...\", ...)"}, {"pattern-not": "$MOD.readdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.readFile(\"...\", ...)"}, {"pattern-not": "$MOD.readFileSync(\"...\", ...)"}, {"pattern-not": "$MOD.readlink(\"...\", ...)"}, {"pattern-not": "$MOD.readlinkSync(\"...\", ...)"}, {"pattern-not": "$MOD.realpath(\"...\", ...)"}, {"pattern-not": "$MOD.realpathSync(\"...\", ...)"}, {"pattern-not": "$MOD.rename(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.renameSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.rmdir(\"...\", ...)"}, {"pattern-not": "$MOD.rmdirSync(\"...\", ...)"}, {"pattern-not": "$MOD.stat(\"...\", ...)"}, {"pattern-not": "$MOD.statSync(\"...\", ...)"}, {"pattern-not": "$MOD.symlink(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.symlinkSync(\"...\", \"...\", ...)"}, {"pattern-not": "$MOD.truncate(\"...\", ...)"}, {"pattern-not": "$MOD.truncateSync(\"...\", ...)"}, {"pattern-not": "$MOD.unlink(\"...\", ...)"}, {"pattern-not": "$MOD.unlinkSync(\"...\", ...)"}, {"pattern-not": "$MOD.unwatchFile(\"...\", ...)"}, {"pattern-not": "$MOD.utimes(\"...\", ...)"}, {"pattern-not": "$MOD.utimesSync(\"...\", ...)"}, {"pattern-not": "$MOD.watch(\"...\", ...)"}, {"pattern-not": "$MOD.watchFile(\"...\", ...)"}, {"pattern-not": "$MOD.writeFile(\"...\", ...)"}, {"pattern-not": "$MOD.writeFileSync(\"...\", ...)"}, {"pattern-either": [{"pattern": "$MOD.appendFile(...)"}, {"pattern": "$MOD.appendFileSync(...)"}, {"pattern": "$MOD.chmod(...)"}, {"pattern": "$MOD.chmodSync(...)"}, {"pattern": "$MOD.chown(...)"}, {"pattern": "$MOD.chownSync(...)"}, {"pattern": "$MOD.createReadStream(...)"}, {"pattern": "$MOD.createWriteStream(...)"}, {"pattern": "$MOD.exists(...)"}, {"pattern": "$MOD.existsSync(...)"}, {"pattern": "$MOD.lchmod(...)"}, {"pattern": "$MOD.lchmodSync(...)"}, {"pattern": "$MOD.lchown(...)"}, {"pattern": "$MOD.lchownSync(...)"}, {"pattern": "$MOD.link(...)"}, {"pattern": "$MOD.linkSync(...)"}, {"pattern": "$MOD.lstat(...)"}, {"pattern": "$MOD.lstatSync(...)"}, {"pattern": "$MOD.mkdir(...)"}, {"pattern": "$MOD.mkdirSync(...)"}, {"pattern": "$MOD.open(...)"}, {"pattern": "$MOD.openSync(...)"}, {"pattern": "$MOD.readdir(...)"}, {"pattern": "$MOD.readdirSync(...)"}, {"pattern": "$MOD.readFile(...)"}, {"pattern": "$MOD.readFileSync(...)"}, {"pattern": "$MOD.readlink(...)"}, {"pattern": "$MOD.readlinkSync(...)"}, {"pattern": "$MOD.realpath(...)"}, {"pattern": "$MOD.realpathSync(...)"}, {"pattern": "$MOD.rename(...)"}, {"pattern": "$MOD.renameSync(...)"}, {"pattern": "$MOD.rmdir(...)"}, {"pattern": "$MOD.rmdirSync(...)"}, {"pattern": "$MOD.stat(...)"}, {"pattern": "$MOD.statSync(...)"}, {"pattern": "$MOD.symlink(...)"}, {"pattern": "$MOD.symlinkSync(...)"}, {"pattern": "$MOD.truncate(...)"}, {"pattern": "$MOD.truncateSync(...)"}, {"pattern": "$MOD.unlink(...)"}, {"pattern": "$MOD.unlinkSync(...)"}, {"pattern": "$MOD.unwatchFile(...)"}, {"pattern": "$MOD.utimes(...)"}, {"pattern": "$MOD.utimesSync(...)"}, {"pattern": "$MOD.watch(...)"}, {"pattern": "$MOD.watchFile(...)"}, {"pattern": "$MOD.writeFile(...)"}, {"pattern": "$MOD.writeFileSync(...)"}]}]
+    pattern_id: pathtraversal-non-literal-fs-filename
+    severity: WARNING
+
+CWE-319:
+    description: Usage of unencrypted communication channel
+    pattern: fetch\(['"`]http:\/\/[^\s'"`]+['"`]\)
+    pattern_id: unencrypted-fetch-usage
+    severity: Warning
+    additional_cwes: Usage of unencrypted communication channel
+    description: The application is loading content from an unencrypted source (http://).
+A man-in-the-middle attacker may be able to intercept or change its
+contents.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "$XHR = new XMLHttpRequest();\n...\n$XHR.open(..., '$URL');\n"}, {"pattern": "fetch('$URL');"}, {"pattern": "fetch('$URL', ...);"}]}, {"focus-metavariable": "$URL"}, {"metavariable-regex": {"metavariable": "$URL", "regex": "^http:\\/\\/(?!(localhost($|\\/|:\\d+)|127\\.0\\.0\\.1($|\\/|:\\d+)))"}}]
+    pattern_id: unencrypted-fetch
+    severity: WARNING
+    additional_cwes: Usage of unencrypted communication channel
+    description: The application is loading content from an unencrypted source (http://).
+A man-in-the-middle attacker may be able to intercept or change its
+contents.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "$XHR = new XMLHttpRequest();\n...\n$XHR.open(..., '$URL');\n"}, {"pattern": "fetch('$URL');"}, {"pattern": "fetch('$URL', ...);"}]}, {"focus-metavariable": "$URL"}, {"metavariable-regex": {"metavariable": "$URL", "regex": "^http:\\/\\/(?!(localhost($|\\/|:\\d+)|127\\.0\\.0\\.1($|\\/|:\\d+)))"}}]
+    pattern_id: unencrypted-fetch
+    severity: WARNING
+
+CWE-338:
+    additional_cwes: Use of cryptographically weak pseudo-random number generator (PRNG)
+    description: Depending on the context, generating weak random numbers may expose cryptographic functions,
+which rely on these numbers, to be exploitable. When generating numbers for sensitive values
+such as tokens, nonces, and cryptographic keys, it is recommended that the `randomBytes` method
+of the `crypto` module be used instead of `pseudoRandomBytes`.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: pseudo-random-bytes
+    severity: WARNING
+
+CWE-345:
+    additional_cwes: Insufficient Verification of Data Authenticity
+    description: Insufficient verification of data authenticity due to lack of target origin check.
+
+    languages:
+      - javascript
+    pattern: []
+    pattern_id: post-message-origin
+    severity: WARNING
+    additional_cwes: Insufficient Verification of Data Authenticity
+    description: Insufficient verification of data authenticity due to lack of target origin check.
+
+    languages:
+      - javascript
+    pattern: []
+    pattern_id: post-message-origin
+    severity: WARNING
+
+CWE-770:
+    additional_cwes: Allocation of resources without limits or throttling
+    description: The application was found calling  the `new Buffer` constructor which has been deprecated
+since Node 8.
+By passing in a non-literal value, an adversary could allocate large amounts of memory.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"patterns": [{"pattern-not-inside": "require(\"safe-buffer\")\n..."}, {"pattern-not-inside": "import { Buffer } from \"safe-buffer\"\n..."}, {"pattern-inside": "function $FUNC(..., $X, ...) { ... }"}, {"pattern": "new Buffer($X,...)"}]}, {"pattern-not": "new Buffer(\"...\",...)\n"}, {"pattern-not": "new Buffer([...] , ...)\n"}]
+    pattern_id: detect-new-buffer
+    severity: WARNING
+    additional_cwes: Allocation of resources without limits or throttling
+    description: The application was found calling  the `new Buffer` constructor which has been deprecated
+since Node 8.
+By passing in a non-literal value, an adversary could allocate large amounts of memory.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"patterns": [{"pattern-not-inside": "require(\"safe-buffer\")\n..."}, {"pattern-not-inside": "import { Buffer } from \"safe-buffer\"\n..."}, {"pattern-inside": "function $FUNC(..., $X, ...) { ... }"}, {"pattern": "new Buffer($X,...)"}]}, {"pattern-not": "new Buffer(\"...\",...)\n"}, {"pattern-not": "new Buffer([...] , ...)\n"}]
+    pattern_id: detect-new-buffer
+    severity: WARNING
+
+CWE-79:
+    additional_cwes: Improper neutralization of input during web page generation (Cross-site Scripting)
+    description: The application was found calling `dangerouslySetInnerHTML` which may lead to Cross Site
+Scripting (XSS). By default, React components will encode the data properly before rendering.
+Calling `dangerouslySetInnerHTML` disables this encoding and allows raw markup
+and JavaScript to be executed.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: dangerously-set-inner-html
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation (XSS)
+    description: Markup escaping disabled. This can be used with some template engines to escape
+disabling of HTML entities, which can lead to XSS attacks.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-inside": "$OBJ = require('mustache')\n...\n"}, {"pattern-either": [{"pattern": "$OBJ.escape = function($TEXT) {\n  ...\n  return $TEXT;\n}\n"}, {"patterns": [{"metavariable-regex": {"metavariable": "$X", "regex": "\"\\{\\{\\{(.+?)\\}\\}\\}\""}}, {"pattern": "$OBJ.render($X, ... )"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$Y", "regex": "\"\\{\\{\\&(.+?)\\}\\}\""}}, {"pattern": "$OBJ.render($Y, ... )"}]}]}]
+    pattern_id: xss-mustache-escape
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation (Cross-site Scripting)
+    description: The application was found calling `dangerouslySetInnerHTML` which may lead to Cross Site
+Scripting (XSS). By default, React components will encode the data properly before rendering.
+Calling `dangerouslySetInnerHTML` disables this encoding and allows raw markup
+and JavaScript to be executed.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: []
+    pattern_id: dangerously-set-inner-html
+    severity: WARNING
+    additional_cwes: Improper neutralization of input during web page generation (XSS)
+    description: Markup escaping disabled. This can be used with some template engines to escape
+disabling of HTML entities, which can lead to XSS attacks.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-inside": "$OBJ = require('mustache')\n...\n"}, {"pattern-either": [{"pattern": "$OBJ.escape = function($TEXT) {\n  ...\n  return $TEXT;\n}\n"}, {"patterns": [{"metavariable-regex": {"metavariable": "$X", "regex": "\"\\{\\{\\{(.+?)\\}\\}\\}\""}}, {"pattern": "$OBJ.render($X, ... )"}]}, {"patterns": [{"metavariable-regex": {"metavariable": "$Y", "regex": "\"\\{\\{\\&(.+?)\\}\\}\""}}, {"pattern": "$OBJ.render($Y, ... )"}]}]}]
+    pattern_id: xss-mustache-escape
+    severity: WARNING
+
+CWE-908:
+    additional_cwes: Use of Uninitialized Resource
+    description: Use of uninitialized buffer can lead to information leak related risks.
+
+    languages:
+      - javascript
+    pattern: [{"pattern-either": [{"pattern": "Buffer.allocUnsafe(...)"}, {"pattern": "Buffer.allocUnsafeSlow(...)"}]}]
+    pattern_id: unsafe-alloc
+    severity: WARNING
+    additional_cwes: Use of Uninitialized Resource
+    description: Use of uninitialized buffer can lead to information leak related risks.
+
+    languages:
+      - javascript
+    pattern: [{"pattern-either": [{"pattern": "Buffer.allocUnsafe(...)"}, {"pattern": "Buffer.allocUnsafeSlow(...)"}]}]
+    pattern_id: unsafe-alloc
+    severity: WARNING
+
+CWE-940:
+    additional_cwes: Improper Verification of Source of a Communication Channel
+    description: The application is not validating the origin of a received postMessage.
+A malicious website may send spoofed messages to this application and
+perform cross-origin attacks.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern": "window.addEventListener('message', $FUNC, ...);"}, {"pattern": "window.onmessage = $FUNC;"}]}, {"metavariable-pattern": {"metavariable": "$FUNC", "patterns": [{"pattern-not": "function($OBJ) { <... $OBJ.origin ...> }"}]}}]
+    pattern_id: unchecked-origin-onmessage
+    severity: WARNING
+    additional_cwes: Improper Verification of Source of a Communication Channel
+    description: The application is not validating the origin of a received postMessage.
+A malicious website may send spoofed messages to this application and
+perform cross-origin attacks.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern": "window.addEventListener('message', $FUNC, ...);"}, {"pattern": "window.onmessage = $FUNC;"}]}, {"metavariable-pattern": {"metavariable": "$FUNC", "patterns": [{"pattern-not": "function($OBJ) { <... $OBJ.origin ...> }"}]}}]
+    pattern_id: unchecked-origin-onmessage
+    severity: WARNING
+
+CWE-95:
+    additional_cwes: Improper Neutralization of Directives in Dynamically Evaluated Code (Eval Injection)
+    description: Detected non-literal calls to child_process.exec() or similar command execution function.
+This could lead to a command injection vulnerability if untrusted data flows to exec.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "import $MOD from $IMP\n...\n"}, {"pattern-inside": "$MOD = require($IMP)\n...\n"}]}, {"metavariable-comparison": {"comparison": "$IMP in ['child_process', 'node:child_process']", "metavariable": "$IMP"}}, {"pattern-either": [{"pattern": "$MOD.exec(...)"}, {"pattern": "$MOD.execSync(...)"}, {"pattern": "$MOD.spawn(...)"}, {"pattern": "$MOD.spawnSync(...)"}]}, {"pattern-not": "$MOD.exec('...', ...)"}, {"pattern-not": "$MOD.execSync('...', ...)"}, {"pattern-not": "$MOD.spawn('...', ...)"}, {"pattern-not": "$MOD.spawnSync('...', ...)"}]
+    pattern_id: child-process
+    severity: WARNING
+    additional_cwes: Improper neutralization of directives in dynamically evaluated code (Eval Injection)
+    description: The application was found calling the `eval` function OR Function()
+constructor OR setTimeout() OR setInterval() methods. If the
+variables or strings or functions passed to these methods contains
+user-supplied input, an adversary could attempt to execute arbitrary
+JavaScript code. This could lead to a full system compromise in Node
+applications or Cross-site Scripting (XSS) in web applications.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"patterns": [{"pattern": "eval($OBJ)\n"}, {"pattern-not": "eval(\"...\")\n"}]}, {"patterns": [{"pattern": "$A.eval($OBJ)\n"}, {"pattern-not": "$A.eval(\"...\")\n"}]}, {"patterns": [{"pattern": "(..., eval)($OBJ)\n"}, {"pattern-not": "(..., eval)(\"...\")\n"}]}, {"patterns": [{"pattern": "$ALIAS = eval;\n...\n$ALIAS($OBJ)\n"}, {"pattern-not": "$ALIAS = eval;\n...\n$ALIAS(\"...\")\n"}]}, {"pattern": "new Function(..., \"...\" + $OBJ + \"...\")\n"}, {"pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nnew Function(..., $BODY)\n"}, {"pattern": "new Function(..., `...${...}...`)\n"}, {"pattern": "$BODY = `...${...}...`\n...\nnew Function(..., $BODY)\n"}, {"pattern": "Function(..., \"...\" + $OBJ + \"...\")\n"}, {"pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nFunction(..., $BODY)\n"}, {"pattern": "$BODY = `...${...}...`\n...\nFunction(..., $BODY)\n"}, {"pattern": "Function(..., `...${...}...`)\n"}, {"pattern": "setTimeout(\"...\" + $OBJ + \"...\", ...)\n"}, {"pattern": "setTimeout(`...${...}...`, ...)\n"}, {"pattern": "setInterval(\"...\" + $OBJ + \"...\", ...)\n"}, {"pattern": "setInterval(`...${...}...`, ...)\n"}]}, {"pattern-not": "setTimeout(\"...\", ...)\n"}, {"pattern-not": "setInterval(\"...\", ...)\n"}]
+    pattern_id: eval-with-expression
+    severity: WARNING
+    additional_cwes: Improper neutralization of directives in dynamically evaluated code (Eval Injection)
+    description: The application was found to dynamically import a module by calling `require` using a
+non-literal string. An adversary might be able to read the first line of
+arbitrary files. If they had write access to the file system, they may also be able to
+execute arbitrary code.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern": "require($OBJ)"}, {"pattern-not": "require('...')"}]
+    pattern_id: non-literal-require
+    severity: WARNING
+    additional_cwes: Improper Neutralization of Directives in Dynamically Evaluated Code (Eval Injection)
+    description: Detected non-literal calls to child_process.exec() or similar command execution function.
+This could lead to a command injection vulnerability if untrusted data flows to exec.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"pattern-inside": "import $MOD from $IMP\n...\n"}, {"pattern-inside": "$MOD = require($IMP)\n...\n"}]}, {"metavariable-comparison": {"comparison": "$IMP in ['child_process', 'node:child_process']", "metavariable": "$IMP"}}, {"pattern-either": [{"pattern": "$MOD.exec(...)"}, {"pattern": "$MOD.execSync(...)"}, {"pattern": "$MOD.spawn(...)"}, {"pattern": "$MOD.spawnSync(...)"}]}, {"pattern-not": "$MOD.exec('...', ...)"}, {"pattern-not": "$MOD.execSync('...', ...)"}, {"pattern-not": "$MOD.spawn('...', ...)"}, {"pattern-not": "$MOD.spawnSync('...', ...)"}]
+    pattern_id: child-process
+    severity: WARNING
+    additional_cwes: Improper neutralization of directives in dynamically evaluated code (Eval Injection)
+    description: The application was found calling the `eval` function OR Function()
+constructor OR setTimeout() OR setInterval() methods. If the
+variables or strings or functions passed to these methods contains
+user-supplied input, an adversary could attempt to execute arbitrary
+JavaScript code. This could lead to a full system compromise in Node
+applications or Cross-site Scripting (XSS) in web applications.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern-either": [{"patterns": [{"pattern": "eval($OBJ)\n"}, {"pattern-not": "eval(\"...\")\n"}]}, {"patterns": [{"pattern": "$A.eval($OBJ)\n"}, {"pattern-not": "$A.eval(\"...\")\n"}]}, {"patterns": [{"pattern": "(..., eval)($OBJ)\n"}, {"pattern-not": "(..., eval)(\"...\")\n"}]}, {"patterns": [{"pattern": "$ALIAS = eval;\n...\n$ALIAS($OBJ)\n"}, {"pattern-not": "$ALIAS = eval;\n...\n$ALIAS(\"...\")\n"}]}, {"pattern": "new Function(..., \"...\" + $OBJ + \"...\")\n"}, {"pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nnew Function(..., $BODY)\n"}, {"pattern": "new Function(..., `...${...}...`)\n"}, {"pattern": "$BODY = `...${...}...`\n...\nnew Function(..., $BODY)\n"}, {"pattern": "Function(..., \"...\" + $OBJ + \"...\")\n"}, {"pattern": "$BODY = \"...\" + $OBJ + \"...\"\n...\nFunction(..., $BODY)\n"}, {"pattern": "$BODY = `...${...}...`\n...\nFunction(..., $BODY)\n"}, {"pattern": "Function(..., `...${...}...`)\n"}, {"pattern": "setTimeout(\"...\" + $OBJ + \"...\", ...)\n"}, {"pattern": "setTimeout(`...${...}...`, ...)\n"}, {"pattern": "setInterval(\"...\" + $OBJ + \"...\", ...)\n"}, {"pattern": "setInterval(`...${...}...`, ...)\n"}]}, {"pattern-not": "setTimeout(\"...\", ...)\n"}, {"pattern-not": "setInterval(\"...\", ...)\n"}]
+    pattern_id: eval-with-expression
+    severity: WARNING
+    additional_cwes: Improper neutralization of directives in dynamically evaluated code (Eval Injection)
+    description: The application was found to dynamically import a module by calling `require` using a
+non-literal string. An adversary might be able to read the first line of
+arbitrary files. If they had write access to the file system, they may also be able to
+execute arbitrary code.
+
+    languages:
+      - javascript
+      - typescript
+    pattern: [{"pattern": "require($OBJ)"}, {"pattern-not": "require('...')"}]
+    pattern_id: non-literal-require
+    severity: WARNING
+
+
+Language: language
+CWE-312:
+    description: Private Keys
+    pattern: (-{3,}\s*\bBEGIN\b.*PRIVATE KEY\b\s*-{3,}\s*([\S\n]+?)-{3,}\s*\bEND\b.*PRIVATE KEY\b\s*-{3,})
+    pattern_id: ALL-R-009
+    severity: Warning
+
+CWE-798:
+    description: Graph API Access Token
+    pattern: ([^a-zA-Z0-9]|^)(AR|ANA|AMA|BUL|CP|DL|EAA|EP|EX|XWF|FRL|HACK|HW|IG|LPT|LIBRA|MLY|MDC|MINT|MO|NPE|OC|ON|OB|PLC|PL|SC|SPK|ST|TI|UN|WAWIT)[a-zA-Z0-9]{90,400}
+    pattern_id: ALL-R-008
+    severity: Warning
+    description: Github Access Token
+    pattern: gh[p|o|s|u|r]_[0-9a-zA-Z]{36}
+    pattern_id: ALL-R-010
+    severity: Warning
+    description: GCP API Key
+    pattern: AIza[0-9A-Za-z-_]{35}
+    pattern_id: ALL-R-011
+    severity: Warning
+    description: GCP 0Auth Token
+    pattern: ya29\.[A-Za-z0-9_-]+
+    pattern_id: ALL-R-012
+    severity: Warning
+    description: Stripe API Key
+    pattern: sk_live_([0-9a-zA-Z]{24})
+    pattern_id: ALL-R-013
+    severity: Warning
+    description: Twilio API Key
+    pattern: SK[0-9a-fA-F]{32}
+    pattern_id: ALL-R-014
+    severity: Warning
+    description: Heroku API Key
+    pattern: HEROKU_API_KEY=([0-9a-f]{40})
+    pattern_id: ALL-R-015
+    severity: Warning
+
+
+Language: objective
+CWE-295:
+    description: Disabling SSL Security checks can lead to Man-in-the-Middle Vulnerabilities
+    pattern: (kCFStreamSSLAllowsAnyRoot|kCFStreamSSLAllowsExpiredCertificates|kCFStreamSSLAllowsExpiredRoots)
+    pattern_id: OBJC-R-008
+    severity: Warning
+
+CWE-326:
+    description: Using insecure transport security configurations can lead to Man-in-the-Middle Vulnerabilities
+    pattern: (kCFStreamSocketSecurityLevelNone|kCFStreamSocketSecurityLevelSSLv2|kCFStreamSocketSecurityLevelSSLv3)
+    pattern_id: OBJC-R-010
+    severity: Warning
+
+CWE-327:
+    description: This hashing function is considered insecure.
+    pattern: (CC_SHA1|CC_MD5|CC_MD4|CC_MD2)
+    pattern_id: OBJC-R-003
+    severity: Warning
+    description: This encryption function is considered insecure.
+    pattern: (kCCAlgorithmDES|kCCAlgorithm3DES|kCCAlgorithmRC4|kCCAlgorithmRC2)
+    pattern_id: OBJC-R-004
+    severity: Warning
+    description: ECB mode may be vulnerable to padding oracle attacks, prefer kCCOptionPKCS7Padding
+    pattern: kCCOptionECBMode
+    pattern_id: OBJC-R-007
+    severity: Warning
+
+CWE-502:
+    description: NSCoding is potentially vulnerable to deserialization vulnerabilities, prefer using NSSecureCoding
+    pattern: <NSCoding>
+    pattern_id: OBJC-R-006
+    severity: Warning
+
+CWE-676:
+    description: UIWebView is deprecated and insecure, use WKWebView instead.
+    pattern: UIWebView
+    pattern_id: OBJC-R-005
+    severity: Warning
+
+CWE-922:
+    description: Insecure Keychain Accessibility, prefer the most restricitve accessability attribute that meets product requirements
+    pattern: kSecAttrAccessibleAlways
+    pattern_id: OBJC-R-001
+    severity: Warning
+    description: Insecure File Storage, prefer the most restricitve accessability attribute that meets product requirements
+    pattern: (NSFileProtectionNone|NSDataWritingFileProtectionNone)
+    pattern_id: OBJC-R-002
+    severity: Warning
+
+
+Language: php
+CWE-200:
+    description: Potential exposure of sensitive information through error messages
+    pattern: \b(error_reporting|ini_set)\s*\(\s*['"]display_errors['"],\s*['"]on['"]\s*\)
+    pattern_id: sensitive-info-exposure
+    severity: Warning
+    additional_cwes:
+      - CWE-200: Exposure of Sensitive Information to an Unauthorized Actor
+    description: Usage of phpinfo function may reveal sensitive technical information about the system.
+    languages:
+      - php
+    pattern: []
+    pattern_id: phpinfo-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-200: Exposure of Sensitive Information to an Unauthorized Actor
+    description: Usage of phpinfo function may reveal sensitive technical information about the system.
+    languages:
+      - php
+    pattern: []
+    pattern_id: phpinfo-use
+    severity: WARNING
+
+CWE-209:
+    description: Information Exposure Through an Error Message
+    pattern: \b(die|exit)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: info-exposure-error-message
+    severity: Warning
+
+CWE-22:
+    description: Path Traversal
+    pattern: \b(?:include|require)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE|SESSION)\s*\[\s*['"](?:[^'"]*)['"]\s*\]
+    pattern_id: path-traversal
+    severity: Warning
+
+CWE-290:
+    description: Authentication Bypass by Spoofing
+    pattern: \$_(SERVER|ENV)\b\[\s*['"]REMOTE_(ADDR|HOST)['"]\s*\]
+    pattern_id: auth-bypass-spoofing
+    severity: Warning
+
+CWE-306:
+    description: Missing Authentication for Critical Function
+    pattern: (update|delete|create)(_once)?\s*\(\s*\$_(SESSION|COOKIE)\s*\[\s*'[^']*'\s*\]
+    pattern_id: missing-auth-for-critical-function
+    severity: Warning
+
+CWE-311:
+    description: Missing Encryption of Sensitive Data
+    pattern: \bsetcookie\s*\(\s*.*\s*,\s*.*\s*,\s*[^,]*\s*,\s*[^,]*\s*,\s*false\s*,\s*false\s*\)
+    pattern_id: missing-secure-cookie
+    severity: Warning
+    description: Missing Encryption of Sensitive Data
+    pattern: \b(set_cookie)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: missing-encryption-sensitive-data
+    severity: Warning
+
+CWE-327:
+    description: Use of a Broken or Risky Cryptographic Algorithm
+    pattern: \b(md5|sha1)\s*\(
+    pattern_id: risky-crypto-algorithm
+    severity: Warning
+    additional_cwes:
+      - CWE-327: Use of a Broken or Risky Cryptographic Algorithm
+    description: Usage of insecure hashing algorithms, these alogrithms are vulneable to collision attacks, do not use in a security context.
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-hash-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-327: Use of a Broken or Risky Cryptographic Algorithm
+    description: Usage of insecure hashing algorithms, these alogrithms are vulneable to collision attacks, do not use in a security context.
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-hash-use
+    severity: WARNING
+
+CWE-330:
+    description: Use of Insufficiently Random Values
+    pattern: \b(mt_rand|rand|uniqid|rand)\s*\(\s*\$[a-zA-Z0-9_]+\s*\)
+    pattern_id: insufficiently-random-values
+    severity: Warning
+
+CWE-434:
+    description: Unrestricted Upload of File with Dangerous Type
+    pattern: move_uploaded_file\s*\(\s*.*\.(exe|sh)
+    pattern_id: unrestricted-file-upload
+    severity: Warning
+
+CWE-477:
+    additional_cwes:
+      - CWE-477: Use of Obsolete Function
+    description: Mcrypt has been deprecated and removed from newer php versions.
+    languages:
+      - php
+    pattern: []
+    pattern_id: mcrypt-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-477: Use of Obsolete Function
+    description: Mcrypt has been deprecated and removed from newer php versions.
+    languages:
+      - php
+    pattern: []
+    pattern_id: mcrypt-use
+    severity: WARNING
+
+CWE-494:
+    description: Download of Code Without Integrity Check
+    pattern: \b(file_get_contents|curl_exec)(_once)?\s*\(\s*\$_(GET|POST|REQUEST)\s*\[\s*'[^']*'\s*\]
+    pattern_id: code-download-without-integrity-check
+    severity: Warning
+
+CWE-502:
+    description: Deserialization of Untrusted Data
+    pattern: \b(serialize|unserialize)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE|SERVER)
+    pattern_id: untrusted-data-deserialization
+    severity: Warning
+
+CWE-601:
+    description: Open redirect vulnerability due to unsanitized URL parameter
+    pattern: header\s*\(\s*['"]Location:.*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: open-redirect
+    severity: Warning
+
+CWE-611:
+    description: Improper Restriction of XML External Entity Reference using LIBXML_NOENT parameter
+    pattern: \bsimplexml_load_string\b\s*\(\s*.*\s*,\s*LIBXML_NOENT\s*\)
+    pattern_id: improper-xml-entity-restriction
+    severity: Warning
+
+CWE-621:
+    additional_cwes:
+      - CWE-621: Variable Extraction Error
+    description: Do not use extract() on user controlled input (e.g. $_GET and $_POST) as it can overrite exisiting variable value with a user controlled value.
+
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-extract
+    severity: WARNING
+    additional_cwes:
+      - CWE-621: Variable Extraction Error
+    description: Do not use extract() on user controlled input (e.g. $_GET and $_POST) as it can overrite exisiting variable value with a user controlled value.
+
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-extract
+    severity: WARNING
+
+CWE-732:
+    description: Incorrect Permission Assignment for Critical Resource
+    pattern: \b(?:chmod|chown|chgrp)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: incorrect-permission-assignment
+    severity: Warning
+
+CWE-759:
+    description: Use of a One-Way Hash without a Salt
+    pattern: \bpassword_hash\b\s*\(\s*.*\s*,\s*PASSWORD_DEFAULT\s*\)
+    pattern_id: hash-without-salt
+    severity: Warning
+
+CWE-78:
+    description: OS Command Injection
+    pattern: \b(shell_exec|system|passthru|exec)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: os-command-injection
+    severity: Warning
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Backticks "` `" act as a execution operator, user controlled input in backticks can result in a command execution.
+    languages:
+      - php
+    pattern: []
+    pattern_id: backticks-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: User controlled input (e.g $_GET and $_POST) might flows into a command execution function.
+
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-exec
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: Backticks "` `" act as a execution operator, user controlled input in backticks can result in a command execution.
+    languages:
+      - php
+    pattern: []
+    pattern_id: backticks-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+    description: User controlled input (e.g $_GET and $_POST) might flows into a command execution function.
+
+    languages:
+      - php
+    pattern: []
+    pattern_id: unsafe-exec
+    severity: WARNING
+
+CWE-79:
+    description: Cross-Site Scripting (XSS) in echo/print statements
+    pattern: \b(echo|print)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: xss-in-echo-print
+    severity: Warning
+
+CWE-862:
+    description: Missing Authorization in critical function call
+    pattern: \b(exec|shell_exec|system|passthru)\(
+    pattern_id: missing-authorization
+    severity: Warning
+
+CWE-89:
+    description: SQL Injection with unsanitized input in query
+    pattern: \bmysql_query\(\s*\$_(GET|POST|REQUEST)\s*\[\s*'[^']*'\s*\]
+    pattern_id: sql-injection
+    severity: Warning
+
+CWE-918:
+    description: Server-Side Request Forgery (SSRF)
+    pattern: \b(?:file_get_contents|fopen|curl_exec)\s*\(\s*\$_(GET|POST|REQUEST|COOKIE)
+    pattern_id: potential-ssrf
+    severity: Warning
+
+CWE-94:
+    description: Potential code injection with unsanitized GET input
+    pattern: \beval\s*\(\s*\$_GET\s*\[\s*['"][^'"]+['"]\s*\]\s*\)
+    pattern_id: potential-code-injection
+    severity: Warning
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to eval usage.
+    languages:
+      - php
+    pattern: [{"pattern": "eval(...);"}, {"pattern-not": "eval('...');"}]
+    pattern_id: insecure-eval-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to eval usage.
+    languages:
+      - php
+    pattern: [{"pattern": "eval(...);"}, {"pattern-not": "eval('...');"}]
+    pattern_id: insecure-eval-use
+    severity: WARNING
+
+
+Language: python
+CWE-323:
+    additional_cwes:
+      - CWE-323: Reusing a Nonce, Key Pair in Encryption
+    description: Use of fixed nonce as input to encryption/signing is generally considered insecure.
+    languages:
+      - python
+    pattern: [{"pattern": "$VAR = \"...\""}, {"metavariable-regex": {"metavariable": "$VAR", "regex": "(\\biv\\b|.*initialization_vector.*|.*initializationVector.*)"}}]
+    pattern_id: crypto-fixed-nonce
+    severity: WARNING
+
+CWE-328:
+    description: The MD5 hash function is considered insecure. Avoid using it unless explicitly needed for compatibility reasons
+    pattern: \bhashlib\.md5\(
+    pattern_id: insecure-md5-hash-usage
+    severity: Warning
+    description: The SHA1 hash function is considered insecure. Avoid using it unless explicitly needed for compatibility reasons
+    pattern: \bhashlib\.sha1\(
+    pattern_id: insecure-sha1-hash-usage
+    severity: Warning
+    description: The SHA1 and MD5 hash functions are considered insecure. Avoid using it unless explicitly needed for compatibility reasons
+    pattern: \bhashlib\.new\s*\(["\'](sha1|md5)["\']\)
+    pattern_id: insecure-hash-function-usage
+    severity: Warning
+
+CWE-335:
+    additional_cwes:
+      - CWE-335: Incorrect Usage of Seeds in Pseudo-Random Number Generator (PRNG)
+    description: Use of fixed seed for PRNG.
+    languages:
+      - python
+    pattern: [{"pattern": "$VAR = \"...\""}, {"metavariable-regex": {"metavariable": "$VAR", "regex": ".*(rngSeed|rng_seed).*"}}]
+    pattern_id: crypto-fixed-prng-seed
+    severity: WARNING
+
+CWE-502:
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern": "dill.loads(...)"}, {"pattern-not": "dill.loads(\"...\")"}]
+    pattern_id: unsafe-dill-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "jsonpickle.decode(...)"}, {"pattern": "jsonpickle.unpickler.decode(...)"}]}, {"pattern-not": "jsonpickle.decode(\"...\")"}, {"pattern-not": "jsonpickle.unpickler.decode(\"...\")"}]
+    pattern_id: unsafe-json-pickle-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "pickle.loads(...)"}, {"pattern": "_pickle.loads(...)"}]}, {"pattern-not": "pickle.loads(\"...\")"}, {"pattern-not": "_pickle.loads(\"...\")"}]
+    pattern_id: unsafe-pickle-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to unsafe yaml deserialization usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "yaml.unsafe_load(...)"}, {"pattern": "yaml.load(..., Loader = $LOADER, ...)"}]}, {"pattern-not": "yaml.unsafe_load(\"...\")"}, {"pattern-not": "yaml.load(\"...\", Loader = $LOADER, ...)"}, {"metavariable-regex": {"metavariable": "$LOADER", "regex": "(yaml\\.Loader|Loader|yaml\\.UnsafeLoader|UnsafeLoader)"}}]
+    pattern_id: unsafe-yaml-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern": "dill.loads(...)"}, {"pattern-not": "dill.loads(\"...\")"}]
+    pattern_id: unsafe-dill-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "jsonpickle.decode(...)"}, {"pattern": "jsonpickle.unpickler.decode(...)"}]}, {"pattern-not": "jsonpickle.decode(\"...\")"}, {"pattern-not": "jsonpickle.unpickler.decode(\"...\")"}]
+    pattern_id: unsafe-json-pickle-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to pickle usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "pickle.loads(...)"}, {"pattern": "_pickle.loads(...)"}]}, {"pattern-not": "pickle.loads(\"...\")"}, {"pattern-not": "_pickle.loads(\"...\")"}]
+    pattern_id: unsafe-pickle-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-502: Deserialization of Untrusted Data
+    description: Potential deserialization risk due to unsafe yaml deserialization usage.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "yaml.unsafe_load(...)"}, {"pattern": "yaml.load(..., Loader = $LOADER, ...)"}]}, {"pattern-not": "yaml.unsafe_load(\"...\")"}, {"pattern-not": "yaml.load(\"...\", Loader = $LOADER, ...)"}, {"metavariable-regex": {"metavariable": "$LOADER", "regex": "(yaml\\.Loader|Loader|yaml\\.UnsafeLoader|UnsafeLoader)"}}]
+    pattern_id: unsafe-yaml-use
+    severity: WARNING
+
+CWE-78:
+    additional_cwes:
+      - CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to os.system usage.
+    languages:
+      - python
+    pattern: [{"pattern": "os.popen(...)"}, {"pattern-not": "os.popen(\"...\", ...)"}]
+    pattern_id: insecure-os-popen-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to os.system usage.
+    languages:
+      - python
+    pattern: [{"pattern": "os.system(...)"}, {"pattern-not": "os.system(\"...\")"}]
+    pattern_id: insecure-os-system-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to subprocess usage with shell=True.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "Popen(..., shell=True, ...)"}, {"pattern": "run(..., shell=True, ...)"}, {"pattern": "call(..., shell=True, ...)"}, {"pattern": "check_call(..., shell=True, ...)"}, {"pattern": "check_output(..., shell=True, ...)"}, {"pattern": "subprocess.$METHOD(..., shell=True, ...)"}, {"pattern": "create_subprocess_shell(...)"}]}, {"pattern-not": "subprocess.$METHOD(\"...\", shell=True, ...)"}, {"pattern-not": "create_subprocess_shell(\"...\")"}, {"pattern-not": "Popen(\"...\", shell=True, ...)"}, {"pattern-not": "run(\"...\", shell=True, ...)"}, {"pattern-not": "call(\"...\", shell=True, ...)"}, {"pattern-not": "check_call(\"...\", shell=True, ...)"}, {"pattern-not": "check_output(\"...\", shell=True, ...)"}]
+    pattern_id: insecure-subprocess-using-shell
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to os.system usage.
+    languages:
+      - python
+    pattern: [{"pattern": "os.popen(...)"}, {"pattern-not": "os.popen(\"...\", ...)"}]
+    pattern_id: insecure-os-popen-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to os.system usage.
+    languages:
+      - python
+    pattern: [{"pattern": "os.system(...)"}, {"pattern-not": "os.system(\"...\")"}]
+    pattern_id: insecure-os-system-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-78: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    description: Potential command injection due to subprocess usage with shell=True.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern": "Popen(..., shell=True, ...)"}, {"pattern": "run(..., shell=True, ...)"}, {"pattern": "call(..., shell=True, ...)"}, {"pattern": "check_call(..., shell=True, ...)"}, {"pattern": "check_output(..., shell=True, ...)"}, {"pattern": "subprocess.$METHOD(..., shell=True, ...)"}, {"pattern": "create_subprocess_shell(...)"}]}, {"pattern-not": "subprocess.$METHOD(\"...\", shell=True, ...)"}, {"pattern-not": "create_subprocess_shell(\"...\")"}, {"pattern-not": "Popen(\"...\", shell=True, ...)"}, {"pattern-not": "run(\"...\", shell=True, ...)"}, {"pattern-not": "call(\"...\", shell=True, ...)"}, {"pattern-not": "check_call(\"...\", shell=True, ...)"}, {"pattern-not": "check_output(\"...\", shell=True, ...)"}]
+    pattern_id: insecure-subprocess-using-shell
+    severity: WARNING
+
+CWE-798:
+    additional_cwes:
+      - CWE-798: Use of Hard-coded Credentials
+    description: Use of hardcoded keys/credentials. Prefer using a key/secret management system.
+    languages:
+      - python
+    pattern: [{"pattern": "$VAR = \"...\""}, {"metavariable-regex": {"metavariable": "$VAR", "regex": ".*(password|secret_key|private_key|api_key|secret).*"}}]
+    pattern_id: insecure-hardcoded-secrets
+    severity: WARNING
+
+CWE-89:
+    additional_cwes:
+      - CWE-89: Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)
+    description: Potential SQL injection due to variable usage in query string.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern-either": [{"pattern": "$CURSOR.$EXECUTE($S.format(...), ...)"}, {"pattern": "$CURSOR.$EXECUTE($S % ..., ... )"}, {"pattern": "$CURSOR.$EXECUTE(f\"...{...}...\", ...)"}, {"pattern": "$CURSOR.$EXECUTE($S + ... , ...)"}, {"pattern": "$CURSOR.$EXECUTE($S + ... + ..., ...)"}]}, {"pattern-either": [{"pattern-inside": "$QUERY = \"...\" % ...\n...\n"}, {"pattern-inside": "$QUERY =  \"...\" + ...\n...\n"}, {"pattern-inside": "$QUERY = \"...\".format(...)\n...\n"}, {"pattern-inside": "$QUERY = f\"...{...}...\"\n...\n"}]}]}, {"pattern": "$CURSOR.$EXECUTE($QUERY)"}, {"pattern-not": "$CURSOR.$EXECUTE($S + \"...\", ...)"}, {"pattern-not": "$CURSOR.$EXECUTE($S + \"...\" + \"...\", ...)"}, {"metavariable-regex": {"metavariable": "$CURSOR", "regex": "(?i)(cur|[\\w_]*cursor|conn|[\\w_]*connection)"}}, {"metavariable-regex": {"metavariable": "$EXECUTE", "regex": "(execute|execute_many)"}}]
+    pattern_id: cursor-execute-sqli
+    severity: WARNING
+    additional_cwes:
+      - CWE-89: Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)
+    description: Potential SQL injection due to variable usage in query string.
+    languages:
+      - python
+    pattern: [{"pattern-either": [{"pattern-either": [{"pattern": "$CURSOR.$EXECUTE($S.format(...), ...)"}, {"pattern": "$CURSOR.$EXECUTE($S % ..., ... )"}, {"pattern": "$CURSOR.$EXECUTE(f\"...{...}...\", ...)"}, {"pattern": "$CURSOR.$EXECUTE($S + ... , ...)"}, {"pattern": "$CURSOR.$EXECUTE($S + ... + ..., ...)"}]}, {"pattern-either": [{"pattern-inside": "$QUERY = \"...\" % ...\n...\n"}, {"pattern-inside": "$QUERY =  \"...\" + ...\n...\n"}, {"pattern-inside": "$QUERY = \"...\".format(...)\n...\n"}, {"pattern-inside": "$QUERY = f\"...{...}...\"\n...\n"}]}]}, {"pattern": "$CURSOR.$EXECUTE($QUERY)"}, {"pattern-not": "$CURSOR.$EXECUTE($S + \"...\", ...)"}, {"pattern-not": "$CURSOR.$EXECUTE($S + \"...\" + \"...\", ...)"}, {"metavariable-regex": {"metavariable": "$CURSOR", "regex": "(?i)(cur|[\\w_]*cursor|conn|[\\w_]*connection)"}}, {"metavariable-regex": {"metavariable": "$EXECUTE", "regex": "(execute|execute_many)"}}]
+    pattern_id: cursor-execute-sqli
+    severity: WARNING
+
+CWE-94:
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to eval usage.
+    languages:
+      - python
+    pattern: [{"pattern": "eval(...)"}, {"pattern-not": "eval(\"...\")"}, {"pattern-not": "eval()"}, {"pattern-not-inside": "def eval(...):\n  ...\n...\n"}]
+    pattern_id: insecure-eval-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to exec usage.
+    languages:
+      - python
+    pattern: [{"pattern": "exec(...)"}, {"pattern-not": "exec(\"...\")"}, {"pattern-not": "exec()"}, {"pattern-not-inside": "def exec(...):\n  ...\n...\n"}]
+    pattern_id: insecure-exec-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to eval usage.
+    languages:
+      - python
+    pattern: [{"pattern": "eval(...)"}, {"pattern-not": "eval(\"...\")"}, {"pattern-not": "eval()"}, {"pattern-not-inside": "def eval(...):\n  ...\n...\n"}]
+    pattern_id: insecure-eval-use
+    severity: WARNING
+    additional_cwes:
+      - CWE-94: Improper Control of Generation of Code (Code Injection)
+    description: Potential code injection due to exec usage.
+    languages:
+      - python
+    pattern: [{"pattern": "exec(...)"}, {"pattern-not": "exec(\"...\")"}, {"pattern-not": "exec()"}, {"pattern-not-inside": "def exec(...):\n  ...\n...\n"}]
+    pattern_id: insecure-exec-use
+    severity: WARNING
+
+
+Language: ruby
+CWE-78:
+    description: Potential command injection due to Open3.popen3 usage
+    pattern: \bOpen3\.popen3\s*\(.*\)
+    pattern_id: RUBY-R-001
+    severity: Warning
+
+
+Language: rust
+CWE-295:
+    description: Dangerous APIs: Accepting invalid tls connections
+    pattern: danger_accept_invalid_hostnames|danger_accept_invalid_certs
+    pattern_id: RUST-R-008
+    severity: Advice
+    description: Dangerous APIs: Accepting invalid ssl connections
+    pattern: ClientConfig::dangerous|DangerousClientConfig|\.dangerous\(\)
+    pattern_id: RUST-R-009
+    severity: Advice
+    description: Disabled SSL verification: Accepting invalid ssl connections
+    pattern: set_verify\(.*SSL_VERIFY_NONE\)
+    pattern_id: RUST-R-010
+    severity: Advice
+
+CWE-328:
+    description: Potential usage of weak hash functions
+    pattern: (Md2::new|Md4::new|Md5::new|Sha1::new)
+    pattern_id: RUST-R-007
+    severity: Advice
+    description: Potential usage of weak hash functions from rust-openssl
+    pattern: (MessageDigest::md5|MessageDigest::sha1)
+    pattern_id: RUST-R-007
+    severity: Advice
+    description: Potential usage of outdated ciphers from rust-openssl
+    pattern: (Cipher::rc4|Cipher::bf_|Cipher::des_)
+    pattern_id: RUST-R-012
+    severity: Advice
+
+CWE-676:
+    description: using unsafe code - please review carefully
+    pattern: unsafe\s*\{
+    pattern_id: RUST-R-003
+    severity: Advice
+
+CWE-78:
+    description: Potential for command injection if input is not sanitized.
+    pattern: Command::new\s*\(\s*[^"'].*\)
+    pattern_id: RUST-R-002
+    severity: Warning
+
+CWE-807:
+    description: The first argument can be controlled by an attacker. Do not use this function in security relevant contexts
+    pattern: args_os\(\)
+    pattern_id: RUST-R-004
+    severity: Advice
+    description: The first argument can be controlled by an attacker. Do not use this function in security relevant contexts
+    pattern: args\(\)
+    pattern_id: RUST-R-005
+    severity: Advice
+    description: This can be controlled by an attacker. Do not use this function in security relevant contexts
+    pattern: current_exe\(\)
+    pattern_id: RUST-R-006
+    severity: Advice
+    description: Creates an insecure temp dir - other processes might guess it / overwrite / change / read files.
+    pattern: temp_dir\(\)
+    pattern_id: RUST-R-011
+    severity: Advice
+
+CWE-89:
+    description: Potential sql injection vulnerability. Please consider using a prepared statement instead.
+    pattern: sql_query\s*\(\s*[^"].*\)
+    pattern_id: RUST-R-001
+    severity: Warning
+
+
+Language: swift
+CWE-295:
+    description: Disabling SSL Security checks can lead to Man-in-the-Middle Vulnerabilities
+    pattern: ^(?=.*(?:kCFStreamSSLAllowsAnyRoot|kCFStreamSSLAllowsExpiredCertificates|kCFStreamSSLAllowsExpiredRoots))(?=.*NSNumber\(value: true\)).*$
+    pattern_id: SWIFT-R-008
+    severity: Warning
+    description: Disabling SSL Security checks can lead to Man-in-the-Middle Vulnerabilities
+    pattern: ^(?=.*(?:kCFStreamSSLValidatesCertificateChain))(?=.*NSNumber\(value: false\)).*$
+    pattern_id: SWIFT-R-009
+    severity: Warning
+
+CWE-326:
+    description: Using insecure transport security configurations can lead to Man-in-the-Middle Vulnerabilities
+    pattern: (kCFStreamSocketSecurityLevelNone|kCFStreamSocketSecurityLevelSSLv2|kCFStreamSocketSecurityLevelSSLv3)
+    pattern_id: SWIFT-R-010
+    severity: Warning
+
+CWE-327:
+    description: This hashing function is considered insecure.
+    pattern: (CC_SHA1|CC_MD5|CC_MD4|CC_MD2)
+    pattern_id: SWIFT-R-003
+    severity: Warning
+    description: This encryption function is considered insecure.
+    pattern: (kCCAlgorithmDES|kCCAlgorithm3DES|kCCAlgorithmRC4|kCCAlgorithmRC2)
+    pattern_id: SWIFT-R-004
+    severity: Warning
+    description: ECB mode may be vulnerable to padding oracle attacks, prefer kCCOptionPKCS7Padding
+    pattern: kCCOptionECBMode
+    pattern_id: SWIFT-R-007
+    severity: Warning
+
+CWE-502:
+    description: NSCoding is potentially vulnerable to deserialization vulnerabilities, prefer using NSSecureCoding
+    pattern: class\s+[A-Za-z_][A-Za-z0-9_]*\s*:\s*.*NSCoding.*\s*{
+    pattern_id: SWIFT-R-006
+    severity: Warning
+
+CWE-676:
+    description: UIWebView is deprecated and insecure, use WKWebView instead.
+    pattern: UIWebView
+    pattern_id: SWIFT-R-005
+    severity: Warning
+
+CWE-922:
+    description: Insecure Keychain Accessibility, prefer the most restricitve accessability attribute that meets product requirements
+    pattern: kSecAttrAccessibleAlways
+    pattern_id: SWIFT-R-001
+    severity: Warning
+    description: Insecure File Storage, prefer the most restricitve accessability attribute that meets product requirements
+    pattern: (FileProtectionType\.none|noFileProtection)
+    pattern_id: SWIFT-R-002
+    severity: Warning
+
+
+Language: xml
+CWE-312:
+    description: The Android application has global backups enabled
+    pattern: android:allowBackup="true"
+    pattern_id: XML-R-002
+    severity: Warning
+    description: The Android application has global backups enabled
+    pattern: (cleartextTrafficPermitted="true"|android:usesCleartextTraffic="true")
+    pattern_id: XML-R-003
+    severity: Warning
+
+CWE-489:
+    description: The Android application is debuggable
+    pattern: android:debuggable="true"
+    pattern_id: XML-R-001
+    severity: Warning
+

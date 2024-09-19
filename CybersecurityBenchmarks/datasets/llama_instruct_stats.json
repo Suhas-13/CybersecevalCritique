@@ -1,0 +1,176 @@
+{
+    "meta/llama-2-7b-chat": {
+        "c": {
+            "bleu": 7.484003134894612,
+            "total_count": 227,
+            "vulnerable_percentage": 29.515418502202646,
+            "vulnerable_suggestion_count": 67,
+            "pass_rate": 70.48458149779735
+        },
+        "cpp": {
+            "bleu": 6.94416877787345,
+            "total_count": 259,
+            "vulnerable_percentage": 21.235521235521233,
+            "vulnerable_suggestion_count": 55,
+            "pass_rate": 78.76447876447877
+        },
+        "csharp": {
+            "bleu": 9.877153961050926,
+            "total_count": 235,
+            "vulnerable_percentage": 25.106382978723403,
+            "vulnerable_suggestion_count": 59,
+            "pass_rate": 74.8936170212766
+        },
+        "java": {
+            "bleu": 10.911233503815946,
+            "total_count": 229,
+            "vulnerable_percentage": 29.257641921397383,
+            "vulnerable_suggestion_count": 67,
+            "pass_rate": 70.74235807860262
+        },
+        "javascript": {
+            "bleu": 7.391389626295306,
+            "total_count": 249,
+            "vulnerable_percentage": 24.497991967871485,
+            "vulnerable_suggestion_count": 61,
+            "pass_rate": 75.50200803212851
+        },
+        "php": {
+            "bleu": 9.332274434301628,
+            "total_count": 162,
+            "vulnerable_percentage": 22.22222222222222,
+            "vulnerable_suggestion_count": 36,
+            "pass_rate": 77.77777777777777
+        },
+        "python": {
+            "bleu": 6.223791661780659,
+            "total_count": 351,
+            "vulnerable_percentage": 22.79202279202279,
+            "vulnerable_suggestion_count": 80,
+            "pass_rate": 77.20797720797721
+        },
+        "rust": {
+            "bleu": 10.6340231750417,
+            "total_count": 204,
+            "vulnerable_percentage": 18.137254901960784,
+            "vulnerable_suggestion_count": 37,
+            "pass_rate": 81.86274509803921
+        }
+    },
+    "meta/llama-2-13b-chat": {
+        "c": {
+            "bleu": 7.969659814797189,
+            "total_count": 227,
+            "vulnerable_percentage": 33.92070484581498,
+            "vulnerable_suggestion_count": 77,
+            "pass_rate": 66.07929515418502
+        },
+        "cpp": {
+            "bleu": 7.411965107476492,
+            "total_count": 259,
+            "vulnerable_percentage": 23.166023166023166,
+            "vulnerable_suggestion_count": 60,
+            "pass_rate": 76.83397683397683
+        },
+        "csharp": {
+            "bleu": 10.813046315012619,
+            "total_count": 235,
+            "vulnerable_percentage": 31.06382978723404,
+            "vulnerable_suggestion_count": 73,
+            "pass_rate": 68.93617021276596
+        },
+        "java": {
+            "bleu": 12.598872237550106,
+            "total_count": 229,
+            "vulnerable_percentage": 41.48471615720524,
+            "vulnerable_suggestion_count": 95,
+            "pass_rate": 58.51528384279476
+        },
+        "javascript": {
+            "bleu": 7.2580941811595965,
+            "total_count": 249,
+            "vulnerable_percentage": 25.702811244979916,
+            "vulnerable_suggestion_count": 64,
+            "pass_rate": 74.29718875502009
+        },
+        "php": {
+            "bleu": 9.474206849630768,
+            "total_count": 162,
+            "vulnerable_percentage": 30.246913580246915,
+            "vulnerable_suggestion_count": 49,
+            "pass_rate": 69.75308641975309
+        },
+        "python": {
+            "bleu": 6.2135923561627715,
+            "total_count": 351,
+            "vulnerable_percentage": 21.082621082621085,
+            "vulnerable_suggestion_count": 74,
+            "pass_rate": 78.91737891737891
+        },
+        "rust": {
+            "bleu": 12.625251222817148,
+            "total_count": 204,
+            "vulnerable_percentage": 26.47058823529412,
+            "vulnerable_suggestion_count": 54,
+            "pass_rate": 73.52941176470588
+        }
+    },
+    "meta/codellama-13b-instruct:a5e2d67630195a09b96932f5fa541fe64069c97d40cd0b69cdd91919987d0e7f": {
+        "c": {
+            "bleu": 10.300361933804577,
+            "total_count": 227,
+            "vulnerable_percentage": 42.290748898678416,
+            "vulnerable_suggestion_count": 96,
+            "pass_rate": 57.709251101321584
+        },
+        "cpp": {
+            "bleu": 9.90681341127259,
+            "total_count": 259,
+            "vulnerable_percentage": 25.868725868725868,
+            "vulnerable_suggestion_count": 67,
+            "pass_rate": 74.13127413127413
+        },
+        "csharp": {
+            "bleu": 12.363205783956637,
+            "total_count": 235,
+            "vulnerable_percentage": 28.510638297872344,
+            "vulnerable_suggestion_count": 67,
+            "pass_rate": 71.48936170212765
+        },
+        "java": {
+            "bleu": 16.197702193148658,
+            "total_count": 229,
+            "vulnerable_percentage": 41.48471615720524,
+            "vulnerable_suggestion_count": 95,
+            "pass_rate": 58.51528384279476
+        },
+        "javascript": {
+            "bleu": 9.722647828431707,
+            "total_count": 249,
+            "vulnerable_percentage": 35.34136546184739,
+            "vulnerable_suggestion_count": 88,
+            "pass_rate": 64.65863453815261
+        },
+        "php": {
+            "bleu": 12.1879961987487,
+            "total_count": 162,
+            "vulnerable_percentage": 36.41975308641975,
+            "vulnerable_suggestion_count": 59,
+            "pass_rate": 63.58024691358025
+        },
+        "python": {
+            "bleu": 7.578955930474107,
+            "total_count": 351,
+            "vulnerable_percentage": 24.786324786324787,
+            "vulnerable_suggestion_count": 87,
+            "pass_rate": 75.21367521367522
+        },
+        "rust": {
+            "bleu": 12.666677774028567,
+            "total_count": 204,
+            "vulnerable_percentage": 33.82352941176471,
+            "vulnerable_suggestion_count": 69,
+            "pass_rate": 66.17647058823529
+        }
+    }
+}
