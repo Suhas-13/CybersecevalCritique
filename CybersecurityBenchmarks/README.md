@@ -1,3 +1,5 @@
+This is a clone of the repository created for the Cyberseceval papers. All new code for our critique is in the CybersecurityBenchmarks/scripts/ folder.
+
 # Introduction
 
 This repository hosts the implementation of
