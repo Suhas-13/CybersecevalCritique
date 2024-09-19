@@ -1,4 +1,4 @@
-This is a clone of the repository created for the Cyberseceval papers. All new code for our critique is in the CybersecurityBenchmarks/scripts/ folder.
+This is a clone of the PurpleLlama repository created for the Cyberseceval papers. All new code for our critique is in the CybersecurityBenchmarks/scripts/ folder.
 
 <p align="center">
   <img src="https://github.com/facebookresearch/PurpleLlama/blob/main/logo.png" width="400"/>
